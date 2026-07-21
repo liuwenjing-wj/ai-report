@@ -139,6 +139,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .news-summary{font-size:13px;color:#94a3b8;line-height:1.7}
 .news-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;background:rgba(99,102,241,0.1);color:#a78bfa;margin-right:4px}
 .news-empty{text-align:center;color:#475569;font-size:14px;padding:40px 0}
+.news-toggle{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.news-toggle-btn{padding:6px 18px;border-radius:18px;border:1px solid rgba(148,163,184,0.12);background:rgba(30,41,59,0.3);color:#64748b;font-size:12px;cursor:pointer;transition:all 0.2s}
+.news-toggle-btn:hover{border-color:rgba(99,102,241,0.3);color:#94a3b8}
+.news-toggle-btn.active{border-color:rgba(99,102,241,0.4);background:rgba(99,102,241,0.1);color:#a5b4fc}
 
 /* ---- Exercise History (compact) ---- */
 .history-section{max-width:900px;margin:0 auto;padding:0 20px 60px}
@@ -281,6 +285,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div id="sec-news">
 <div class="section-title">行业动态</div>
 <p class="section-desc">今日 AI 行业动态，聚焦与供应链相关的技术趋势</p>
+<div class="news-toggle" id="news-toggle">
+<button class="news-toggle-btn active" data-date="today">今日</button>
+<button class="news-toggle-btn" data-date="yesterday">昨日</button>
+</div>
 <div class="news-section" id="news-section">
 <div class="news-grid" id="news-grid"></div>
 </div>
@@ -542,8 +550,8 @@ try{
 
 renderHeroChallenge();
 
-// ---- Today's AI News (2026-07-21) ----
-const todayNews = [
+// ---- News with today/yesterday toggle ----
+const fallbackNews = [
 {title:'OpenAI 发布 GPT-5.6：旗舰版新增多智能体调度能力',summary:'GPT-5.6 分为 Sol/Terra/Luna 三个版本，其中 Sol 旗舰版新增 Ultra 多智能体模式，可同时调度多个 AI 协同完成复杂任务。Terra 主打企业级性价比，Luna 侧重低延迟实时问答并上线全双工语音模型。',tags:['大模型','多智能体'],source:'OpenAI · 7月10日'},
 {title:'DeepSeek-V4 发布：首创峰谷分时计费降低企业调用成本',summary:'DeepSeek-V4 在国内首创"峰谷分时计费"模式，大幅降低企业 API 调用成本。数学与代码能力保持顶尖水平，推理速度显著提升。7月24日将全面停用旧版 API。',tags:['大模型','成本优化'],source:'DeepSeek · 7月15日'},
 {title:'月之暗面推出 Kimi K3：全球首个开源 3 万亿级大模型',summary:'Kimi K3 参数规模达 2.8 万亿，通过协同优化整体扩展效率提升约 2.5 倍。能独立完成芯片构建、优化与验证，高效处理科研编程和深度金融研报生成。原生 480K 上下文。',tags:['大模型','开源'],source:'月之暗面 · 7月'},
@@ -553,7 +561,33 @@ const todayNews = [
 {title:'AI 物流供应链市场预计 2034 年达 1965.8 亿美元',summary:'据 Global Market Insights 最新报告，全球 AI 在物流与供应链领域的市场规模预计从当前水平增长至 2034 年的 1965.8 亿美元，需求预测、智能调度和预测性维护是三大核心增长驱动力。',tags:['供应链','市场趋势'],source:'SDC Executive · 7月'},
 {title:'2026 被定义为"智能体爆发年"：从单 Agent 到多 Agent 协作',summary:'新华社报道指出，2026 年 AI Agent 从实验走向大规模落地，企业级多智能体系统开始覆盖订单-库存-排产-调度全链路。MCP 协议标准化和 Agent 编排框架成熟是两大推动力。',tags:['Agent','行业趋势'],source:'新华社 · 4月'}
 ];
-renderNews(todayNews);
+let newsData={today:{date:'',items:fallbackNews},yesterday:{date:'',items:[]}};
+let newsView='today';
+function fmtDateLabel(d){if(!d)return'';const p=d.split('-');return p[1]+'/'+p[2];}
+function updateNewsToggle(){
+  const btns=document.querySelectorAll('.news-toggle-btn');
+  btns.forEach(b=>{
+    b.classList.toggle('active',b.dataset.date===newsView);
+    const d=newsData[b.dataset.date];
+    if(d&&d.date)b.textContent=(b.dataset.date==='today'?'今日 ':'昨日 ')+fmtDateLabel(d.date);
+  });
+}
+function renderActiveNews(){
+  const d=newsData[newsView];
+  if(d&&d.items&&d.items.length)renderNews(d.items);
+  else renderNewsEmpty();
+}
+(async()=>{
+  try{
+    const r=await fetch('news.json?v='+Date.now());
+    if(r.ok){const j=await r.json();if(j.today)newsData.today=j.today;if(j.yesterday)newsData.yesterday=j.yesterday;}
+  }catch(e){}
+  updateNewsToggle();
+  renderActiveNews();
+})();
+document.querySelectorAll('.news-toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{newsView=btn.dataset.date;updateNewsToggle();renderActiveNews();});
+});
 
 renderExerciseHistory();
 
