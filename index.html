@@ -12,6 +12,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 /* ---- Sidebar ---- */
 .sidebar{position:fixed;left:0;top:0;width:180px;height:100vh;background:rgba(8,8,22,0.98);border-right:1px solid rgba(148,163,184,0.08);z-index:50;padding:28px 0;display:flex;flex-direction:column;backdrop-filter:blur(16px)}
 .sidebar-logo{text-align:center;padding:0 16px 24px;border-bottom:1px solid rgba(148,163,184,0.06);margin-bottom:16px}
+.sidebar-logo h2{margin-bottom:4px}
+.sidebar-update{font-size:10px;color:#475569;text-align:center;margin-top:-18px;margin-bottom:16px;padding:0 16px}
 .sidebar-logo h2{font-size:15px;font-weight:700;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .sidebar-nav{flex:1;display:flex;flex-direction:column;gap:2px;padding:0 10px}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:#64748b;font-size:13px;cursor:pointer;transition:all 0.2s;text-decoration:none}
@@ -104,6 +106,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .dp-pm{margin-top:-16px;margin-bottom:24px;padding:12px 16px;background:rgba(99,102,241,0.06);border-radius:10px;border-left:3px solid rgba(99,102,241,0.4);color:#a5b4fc;font-size:13px;line-height:1.7}
 .dp-pm-label{font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
 .dp-related-title{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-weight:600}
+.dp-paths-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin:18px 0 10px;font-weight:600}
+.dp-path-tag{display:inline-block;padding:5px 12px;border-radius:14px;font-size:12px;margin:3px 4px 3px 0;border:1px solid rgba(148,163,184,0.12);color:#94a3b8;background:rgba(148,163,184,0.04)}
+.dp-path-step{font-size:11px;color:#475569;margin-top:2px;padding-left:6px}
 .dp-tag{display:inline-block;padding:5px 12px;border-radius:16px;background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.15);font-size:12px;margin:3px;color:#cbd5e1;cursor:pointer;transition:all 0.2s}
 .dp-tag:hover{background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4)}
 
@@ -200,35 +205,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <!-- ======== SIDEBAR ======== -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo"><h2>AI 知识学习</h2></div>
+  <div class="sidebar-update">更新于 2026-07-21</div>
   <nav class="sidebar-nav">
-    <a class="nav-item active" data-target="sec-challenge"><span class="nav-icon">🎯</span>今日挑战</a>
-    <a class="nav-item" data-target="sec-graph"><span class="nav-icon">🧠</span>知识大图</a>
-    <a class="nav-item" data-target="sec-paths"><span class="nav-icon">📚</span>学习路径</a>
-    <a class="nav-item" data-target="sec-news"><span class="nav-icon">📰</span>行业热点</a>
+    <a class="nav-item active" data-target="sec-graph"><span class="nav-icon">🧠</span>知识大图</a>
+    <a class="nav-item" data-target="sec-challenge"><span class="nav-icon">🎯</span>今日挑战</a>
     <a class="nav-item" data-target="sec-practice"><span class="nav-icon">✏️</span>练习题库</a>
+    <a class="nav-item" data-target="sec-news"><span class="nav-icon">📰</span>行业动态</a>
   </nav>
   <div class="sidebar-footer"><span>供应链 PM 专属</span></div>
 </div>
 <button class="sidebar-toggle" id="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-
-<!-- ======== HEADER ======== -->
-<div class="header">
-<h1>AI 知识学习</h1>
-<p>供应链产品经理专属 · 持续更新中</p>
-<div class="stats">
-<div class="stat"><div class="stat-num" id="stat-nodes">45</div><div class="stat-label">知识点</div></div>
-<div class="stat"><div class="stat-num" id="stat-exercises">15</div><div class="stat-label">练习题</div></div>
-<div class="stat"><div class="stat-num" id="stat-cats">8</div><div class="stat-label">知识域</div></div>
-</div>
-</div>
-
-<!-- ======== TODAY'S CHALLENGE ======== -->
-<div id="sec-challenge">
-<div class="section-title">今日挑战</div>
-<p class="section-desc">每天一道实战题，检验你对 AI + 供应链的理解</p>
-<div class="hero-challenge" id="hero-challenge"></div>
-<div class="session-score" id="session-score"></div>
-</div>
 
 <!-- ======== KNOWLEDGE GRAPH ======== -->
 <div id="sec-graph">
@@ -258,24 +244,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div class="dp-name" id="dp-name"></div>
 <div class="dp-desc" id="dp-desc"></div>
 <div class="dp-pm" id="dp-pm" style="display:none"><div class="dp-pm-label">对 PM 有什么用</div><div id="dp-pm-text"></div></div>
+<div id="dp-paths" style="display:none"><div class="dp-paths-label">所属学习路径</div><div id="dp-paths-list"></div></div>
 <div class="dp-related-title">关联概念</div>
 <div id="dp-related"></div>
 </div>
 
-<!-- ======== LEARNING PATHS ======== -->
-<div id="sec-paths">
-<div class="section-title">学习路径</div>
-<p class="section-desc">按主题串起知识点，点击任意环节查看详细介绍</p>
-<div class="paths-section" id="paths-section"></div>
-</div>
-
-<!-- ======== AI NEWS ======== -->
-<div id="sec-news">
-<div class="section-title">AI 行业热点</div>
-<p class="section-desc">精选近期 AI 行业动态，聚焦与供应链相关的技术趋势</p>
-<div class="news-section" id="news-section">
-<div class="news-grid" id="news-grid"></div>
-</div>
+<!-- ======== TODAY'S CHALLENGE ======== -->
+<div id="sec-challenge">
+<div class="section-title">今日挑战</div>
+<p class="section-desc">每天一道实战题，检验你对 AI + 供应链的理解</p>
+<div class="hero-challenge" id="hero-challenge"></div>
+<div class="session-score" id="session-score"></div>
 </div>
 
 <!-- ======== EXERCISE HISTORY ======== -->
@@ -295,6 +274,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div class="history-tabs" id="history-tabs"></div>
 <div id="ex-container"></div>
 </div>
+</div>
+</div>
+
+<!-- ======== AI NEWS ======== -->
+<div id="sec-news">
+<div class="section-title">行业动态</div>
+<p class="section-desc">今日 AI 行业动态，聚焦与供应链相关的技术趋势</p>
+<div class="news-section" id="news-section">
+<div class="news-grid" id="news-grid"></div>
 </div>
 </div>
 
@@ -433,7 +421,7 @@ document.querySelectorAll('.nav-item').forEach(item=>{
     document.getElementById('sidebar').classList.remove('open');
   });
 });
-const sectionIds=['sec-challenge','sec-graph','sec-paths','sec-news','sec-practice'];
+const sectionIds=['sec-graph','sec-challenge','sec-practice','sec-news'];
 window.addEventListener('scroll',()=>{
   let cur=sectionIds[0];
   for(const id of sectionIds){const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=120)cur=id;}
@@ -546,16 +534,27 @@ try{
     if(d.nodes){const ids=new Set(nodes.map(n=>n.id));d.nodes.forEach(n=>{if(!ids.has(n.id)){n.isNew=true;nodes.push(n);ids.add(n.id);}});}
     if(d.edges){d.edges.forEach(e=>{if(!edges.some(x=>x.source===e.source&&x.target===e.target))edges.push(e);});}
     if(d.exercises)d.exercises.forEach(e=>exercises.push(e));
-    document.getElementById('stat-nodes').textContent=nodes.length;
-    document.getElementById('stat-exercises').textContent=exercises.length;
-    document.getElementById('stat-cats').textContent=new Set(nodes.map(n=>n.cat)).size;
+    const sn=document.getElementById('stat-nodes'),se=document.getElementById('stat-exercises'),sc=document.getElementById('stat-cats');
+    if(sn)sn.textContent=nodes.length;if(se)se.textContent=exercises.length;if(sc)sc.textContent=new Set(nodes.map(n=>n.cat)).size;
     if(d.news&&d.news.length)renderNews(d.news);
   }
 }catch(e){}
 
 renderHeroChallenge();
-renderLearningPaths();
-if(!document.getElementById('news-grid').children.length)renderNewsEmpty();
+
+// ---- Today's AI News (2026-07-21) ----
+const todayNews = [
+{title:'OpenAI 发布 GPT-5.6：旗舰版新增多智能体调度能力',summary:'GPT-5.6 分为 Sol/Terra/Luna 三个版本，其中 Sol 旗舰版新增 Ultra 多智能体模式，可同时调度多个 AI 协同完成复杂任务。Terra 主打企业级性价比，Luna 侧重低延迟实时问答并上线全双工语音模型。',tags:['大模型','多智能体'],source:'OpenAI · 7月10日'},
+{title:'DeepSeek-V4 发布：首创峰谷分时计费降低企业调用成本',summary:'DeepSeek-V4 在国内首创"峰谷分时计费"模式，大幅降低企业 API 调用成本。数学与代码能力保持顶尖水平，推理速度显著提升。7月24日将全面停用旧版 API。',tags:['大模型','成本优化'],source:'DeepSeek · 7月15日'},
+{title:'月之暗面推出 Kimi K3：全球首个开源 3 万亿级大模型',summary:'Kimi K3 参数规模达 2.8 万亿，通过协同优化整体扩展效率提升约 2.5 倍。能独立完成芯片构建、优化与验证，高效处理科研编程和深度金融研报生成。原生 480K 上下文。',tags:['大模型','开源'],source:'月之暗面 · 7月'},
+{title:'智谱 GLM-5.2：1M 超长上下文，Function Calling 达生产级',summary:'GLM-5.2 支持 100 万 Token 超长上下文窗口，Function Calling 达到生产级标准。以 MIT 协议全面开源 GLM 系列模型，产品已覆盖民生治理、工业制造、能源电力等 20 余个行业。',tags:['开源','Function Calling'],source:'智谱 AI · 7月上旬'},
+{title:'腾讯混元 Hy-3 发布：MoE 架构 256K 上下文免费商用',summary:'Hy-3 采用 MoE 混合专家架构，支持 256K 上下文且免费商用。与微信生态、数字人、短视频深度打通，Agent 能力突出。支持华为昇腾芯片部署，推动国产算力生态。',tags:['MoE','Agent'],source:'腾讯 · 7月6日'},
+{title:'Google 发布 Gemini-3.5 Pro：强化视频理解与 3D 解析',summary:'Gemini-3.5 Pro 采用全新训练基座，大幅强化视频理解、3D 解析和数学科研能力。原生对接搜索引擎，支持云端与端侧双部署模式。',tags:['大模型','多模态'],source:'Google · 7月17日'},
+{title:'AI 物流供应链市场预计 2034 年达 1965.8 亿美元',summary:'据 Global Market Insights 最新报告，全球 AI 在物流与供应链领域的市场规模预计从当前水平增长至 2034 年的 1965.8 亿美元，需求预测、智能调度和预测性维护是三大核心增长驱动力。',tags:['供应链','市场趋势'],source:'SDC Executive · 7月'},
+{title:'2026 被定义为"智能体爆发年"：从单 Agent 到多 Agent 协作',summary:'新华社报道指出，2026 年 AI Agent 从实验走向大规模落地，企业级多智能体系统开始覆盖订单-库存-排产-调度全链路。MCP 协议标准化和 Agent 编排框架成熟是两大推动力。',tags:['Agent','行业趋势'],source:'新华社 · 4月'}
+];
+renderNews(todayNews);
+
 renderExerciseHistory();
 
 // Legend
@@ -731,6 +730,10 @@ function showDetail(d){
   document.getElementById('dp-badge').textContent=d.cat;document.getElementById('dp-badge').style.background=c+'20';document.getElementById('dp-badge').style.color=c;
   document.getElementById('dp-name').textContent=d.name;document.getElementById('dp-desc').textContent=d.desc;
   const pm=document.getElementById('dp-pm');if(d.pm){pm.style.display='block';document.getElementById('dp-pm-text').textContent=d.pm;}else pm.style.display='none';
+  // Learning paths containing this node
+  const relPaths=learningPaths.filter(lp=>lp.nodes.includes(d.id));
+  const pathsEl=document.getElementById('dp-paths'),pathsList=document.getElementById('dp-paths-list');
+  if(relPaths.length){pathsEl.style.display='block';pathsList.innerHTML=relPaths.map(lp=>{const idx=lp.nodes.indexOf(d.id);return'<div class="dp-path-tag" style="border-color:'+lp.color+'40;color:'+lp.color+'">'+lp.name+'<span class="dp-path-step"> · 第'+(idx+1)+'步 / 共'+lp.nodes.length+'步</span></div>';}).join('');}else pathsEl.style.display='none';
   const rel=[];edges.forEach(e=>{const s=typeof e.source==='object'?e.source.id:e.source,t=typeof e.target==='object'?e.target.id:e.target;if(s===d.id){const n=nodes.find(x=>x.id===t);if(n)rel.push(n);}if(t===d.id){const n=nodes.find(x=>x.id===s);if(n)rel.push(n);}});
   document.getElementById('dp-related').innerHTML=rel.map(r=>'<span class="dp-tag" data-id="'+r.id+'" style="border-color:'+CAT_COLORS[r.cat]+'40">'+r.name+'</span>').join('');
   document.querySelectorAll('.dp-tag').forEach(tag=>{tag.addEventListener('click',()=>{const nd=nodes.find(n=>n.id===tag.dataset.id);if(nd){showDetail(nd);hlNode(nd);}});});
