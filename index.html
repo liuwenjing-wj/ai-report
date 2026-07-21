@@ -571,10 +571,29 @@ const W=svgEl.clientWidth,H=svgEl.clientHeight;
 const svg=d3.select('#graph-svg');
 const g=svg.append('g');
 
-// Particles
+// SVG glow filters
+const defs=svg.append('defs');
+const fGlow=defs.append('filter').attr('id','glow').attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+fGlow.append('feGaussianBlur').attr('stdDeviation','3').attr('result','b');
+const fMerge=fGlow.append('feMerge');fMerge.append('feMergeNode').attr('in','b');fMerge.append('feMergeNode').attr('in','SourceGraphic');
+const fSoft=defs.append('filter').attr('id','softGlow').attr('x','-100%').attr('y','-100%').attr('width','300%').attr('height','300%');
+fSoft.append('feGaussianBlur').attr('stdDeviation','6').attr('result','b');
+const fSM=fSoft.append('feMerge');fSM.append('feMergeNode').attr('in','b');fSM.append('feMergeNode').attr('in','SourceGraphic');
+
+// Enhanced 3D orbital particles
 const pG=g.append('g');
-const pts=Array.from({length:40},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:0.8+Math.random()*2,o:0.05+Math.random()*0.12}));
-pG.selectAll('circle').data(pts).join('circle').attr('r',d=>d.r).attr('fill','#60a5fa').attr('opacity',d=>d.o).attr('class','particle');
+const pLineG=pG.append('g');
+const PCOLS=['#60a5fa','#22d3ee','#a78bfa','#f472b6','#34d399'];
+const pts=Array.from({length:60},()=>{
+  const th=Math.random()*Math.PI*2,ph=Math.random()*Math.PI;
+  const r=50+Math.random()*Math.min(W,H)*0.42;
+  return{th,ph,r,spd:0.001+Math.random()*0.004,phSpd:(Math.random()-0.5)*0.001,
+    sz:0.6+Math.random()*2.8,col:PCOLS[Math.floor(Math.random()*PCOLS.length)],
+    o:0.1+Math.random()*0.35,x:0,y:0,depth:0,pulse:Math.random()*6.28};
+}});
+const pCircles=pG.append('g').selectAll('circle').data(pts).join('circle')
+  .attr('r',d=>d.sz).attr('fill',d=>d.col).attr('opacity',d=>d.o)
+  .attr('class','particle').attr('filter','url(#glow)');
 
 const zoom=d3.zoom().scaleExtent([0.3,3]).filter(e=>{if(e.type==='wheel')return e.ctrlKey||e.metaKey;return!e.button;}).on('zoom',e=>g.attr('transform',e.transform));
 svg.call(zoom);
@@ -585,26 +604,32 @@ document.getElementById('zoom-reset').addEventListener('click',()=>svg.transitio
 let hv=true;svg.on('mousedown.hint',()=>{if(hv){document.getElementById('scroll-hint').style.opacity='0';hv=false;}});
 
 const cc={};edges.forEach(e=>{cc[e.source]=(cc[e.source]||0)+1;cc[e.target]=(cc[e.target]||0)+1;});
-nodes.forEach(n=>n.r=Math.max(6,Math.min(18,4+(cc[n.id]||0)*1.8)));
 
+// 3D spherical node positioning
+const R=Math.min(W,H)*0.3;
 const cL=Object.keys(CAT_COLORS),cC={};
-cL.forEach((cat,i)=>{const a=(i/cL.length)*2*Math.PI-Math.PI/2;cC[cat]={x:W/2+Math.cos(a)*W*0.28,y:H/2+Math.sin(a)*H*0.28};});
-nodes.forEach(n=>{const c=cC[n.cat]||{x:W/2,y:H/2};n.x=c.x+(Math.random()-0.5)*80;n.y=c.y+(Math.random()-0.5)*80;});
+cL.forEach((cat,i)=>{const th=(i/cL.length)*Math.PI*2,ph=Math.PI*0.3+(i%3)*Math.PI*0.2;cC[cat]={th,ph};});
+nodes.forEach(n=>{
+  const c=cC[n.cat]||{th:0,ph:Math.PI/2};
+  n.th=c.th+(Math.random()-0.5)*0.9;
+  n.ph=c.ph+(Math.random()-0.5)*0.5;
+  n.x=R*Math.sin(n.ph)*Math.cos(n.th);
+  n.y=R*Math.cos(n.ph);
+  n.z=R*Math.sin(n.ph)*Math.sin(n.th);
+  n.r=Math.max(6,Math.min(18,4+(cc[n.id]||0)*1.8));
+});
 
 const sim=d3.forceSimulation(nodes)
-  .force('link',d3.forceLink(edges).id(d=>d.id).distance(80).strength(0.3))
-  .force('charge',d3.forceManyBody().strength(-180))
-  .force('center',d3.forceCenter(W/2,H/2).strength(0.05))
-  .force('collision',d3.forceCollide().radius(d=>d.r+8))
-  .force('catX',d3.forceX(d=>cC[d.cat]?.x||W/2).strength(0.08))
-  .force('catY',d3.forceY(d=>cC[d.cat]?.y||H/2).strength(0.08));
+  .force('link',d3.forceLink(edges).id(d=>d.id).distance(60).strength(0.3))
+  .force('charge',d3.forceManyBody().strength(-100))
+  .force('collision',d3.forceCollide().radius(d=>d.r+6))
+  .force('radial',d3.forceRadial(R,0,0).strength(0.12));
 
 const lG=g.append('g');
 const link=lG.selectAll('line').data(edges).join('line').attr('stroke','rgba(148,163,184,0.12)').attr('stroke-width',1);
 
 const nG=g.append('g');
-const node=nG.selectAll('g').data(nodes).join('g').attr('cursor','pointer').classed('node-new',d=>!!d.isNew)
-  .call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;}).on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
+const node=nG.selectAll('g').data(nodes).join('g').attr('cursor','pointer').classed('node-new',d=>!!d.isNew).attr('data-id',d=>d.id);
 
 node.append('circle').attr('r',d=>d.r).attr('fill',d=>CAT_COLORS[d.cat]).attr('fill-opacity',0.7).attr('stroke',d=>CAT_COLORS[d.cat]).attr('stroke-width',d=>d.isNew?3:1.5).attr('stroke-opacity',d=>d.isNew?0.9:0.4);
 node.filter(d=>d.isNew).select('circle').style('filter',d=>'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)');
@@ -618,26 +643,82 @@ node.on('mouseover',(e,d)=>{tt.querySelector('.tt-name').textContent=d.name;tt.q
 node.on('click',(e,d)=>{e.stopPropagation();showDetail(d);hlNode(d);});
 svg.on('click',()=>{hideDetail();if(!sA)resetHL();});
 
-sim.on('tick',()=>{
-  link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
-  node.attr('transform',d=>'translate('+d.x+','+d.y+')');
-});
+sim.on('tick',()=>{});// sim only resolves forces; rendering in rotation loop
 
-// Independent particle animation loop (not tied to sim tick)
-(function animateParticles(){
-  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;});
-  pG.selectAll('circle').attr('cx',d=>d.x).attr('cy',d=>d.y);
-  requestAnimationFrame(animateParticles);
+// ---- 3D rotation + projection render loop ----
+let rotY=0,rotSpeed=0.003,targetSpeed=0.003;
+let FOV=800,CX=W/2,CY=H/2;
+let dimSet=null;
+
+nG.on('mouseover',()=>{targetSpeed=0.0003;})
+    .on('mouseout',()=>{targetSpeed=0.003;});
+
+(function animate3D(){
+  // Smooth rotation speed transition
+  rotSpeed+=(targetSpeed-rotSpeed)*0.05;
+  rotY+=rotSpeed;
+  const cY=Math.cos(rotY),sY=Math.sin(rotY);
+
+  // Project nodes: 3D→2D with perspective
+  nodes.forEach(d=>{
+    const rx=d.x*cY-d.z*sY, rz=d.x*sY+d.z*cY;
+    const sc=FOV/(FOV+rz);
+    d.sx=rx*sc+CX; d.sy=d.y*sc+CY; d.sc=sc; d.depth=rz;
+  });
+
+  // Update node positions with depth-based scale & opacity
+  node.attr('transform',d=>'translate('+d.sx+','+d.sy+') scale('+d.sc+')')
+      .attr('opacity',d=>{const base=Math.max(0.18,Math.min(1,(d.sc-0.55)*2.8));return dimSet?(dimSet.has(d.id)?base:0.06):base;});
+
+  // Update links with depth-based opacity for 3D volume
+  link.attr('x1',d=>d.source.sx).attr('y1',d=>d.source.sy)
+      .attr('x2',d=>d.target.sx).attr('y2',d=>d.target.sy)
+      .attr('opacity',d=>{const as=(d.source.sc+d.target.sc)/2;return Math.max(0.03,(as-0.55)*0.35);});
+
+  // Depth-sort nodes (back to front) every 10 frames
+  if(Math.random()<0.1){
+    const sorted=[...nodes].sort((a,b)=>a.depth-b.depth);
+    sorted.forEach(d=>{const el=document.querySelector('[data-id="'+d.id+'"]');if(el)el.parentNode.appendChild(el);});
+  }
+
+  // Orbital particles
+  pts.forEach(p=>{
+    p.th+=p.spd; p.ph+=p.phSpd; p.pulse+=0.02;
+    const px=p.r*Math.sin(p.ph)*Math.cos(p.th);
+    const py=p.r*Math.cos(p.ph);
+    const pz=p.r*Math.sin(p.ph)*Math.sin(p.th);
+    const rx2=px*cY-pz*sY, rz2=px*sY+pz*cY;
+    const sc=FOV/(FOV+rz2);
+    p.x=rx2*sc+CX; p.y=py*sc+CY; p.depth=rz2;
+    p.curO=p.o*(0.4+0.6*Math.max(0,(sc-0.5)*2.5))*(0.7+0.3*Math.sin(p.pulse));
+    p.curR=p.sz*sc;
+  });
+  pCircles.attr('cx',d=>d.x).attr('cy',d=>d.y).attr('r',d=>d.curR).attr('opacity',d=>d.curO);
+
+  // Constellation lines between nearby particles (draw every 3 frames)
+  if(Math.random()<0.33){
+    let lHTML='';
+    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<80){const o=Math.max(0,(1-dist/80)*0.06*Math.min(pts[i].curO,pts[j].curO)*8);
+        lHTML+='<line x1="'+pts[i].x+'" y1="'+pts[i].y+'" x2="'+pts[j].x+'" y2="'+pts[j].y+'" stroke="#60a5fa" stroke-width="0.5" opacity="'+o+'"/>';
+    }}}
+    pLineG.html(lHTML);
+  }
+
+  requestAnimationFrame(animate3D);
 })();
 
 function hlNode(d){
   const ids=new Set([d.id]);
   edges.forEach(e=>{const s=typeof e.source==='object'?e.source.id:e.source,t=typeof e.target==='object'?e.target.id:e.target;if(s===d.id)ids.add(t);if(t===d.id)ids.add(s);});
+  dimSet=ids;
   node.classed('node-dim',n=>!ids.has(n.id)).classed('node-hl',n=>ids.has(n.id));
   link.transition().duration(300).attr('stroke',e=>{const s=typeof e.source==='object'?e.source.id:e.source,t=typeof e.target==='object'?e.target.id:e.target;return(s===d.id||t===d.id)?CAT_COLORS[d.cat]:'rgba(148,163,184,0.04)';}).attr('stroke-width',e=>{const s=typeof e.source==='object'?e.source.id:e.source,t=typeof e.target==='object'?e.target.id:e.target;return(s===d.id||t===d.id)?2:0.5;});
 }
 let sA=false,lA=null;
 function resetHL(){
+  dimSet=null;
   node.classed('node-dim',false).classed('node-hl',false);
   node.select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>d.isNew?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');
   node.select('text').transition().duration(300).attr('fill-opacity',1);
@@ -667,6 +748,7 @@ gsi.addEventListener('input',()=>{
   document.querySelectorAll('.legend-item.active').forEach(el=>el.classList.remove('active'));
   const mIds=new Set();
   nodes.forEach(n=>{if(n.name.toLowerCase().includes(q)||n.desc.toLowerCase().includes(q)||n.cat.toLowerCase().includes(q))mIds.add(n.id);});
+  dimSet=mIds;
   mce.textContent=mIds.size+'/'+nodes.length;
   node.classed('node-dim',n=>!mIds.has(n.id)).classed('node-hl',n=>mIds.has(n.id));
   link.transition().duration(200).attr('stroke',e=>{const s=typeof e.source==='object'?e.source.id:e.source,t=typeof e.target==='object'?e.target.id:e.target;return(mIds.has(s)&&mIds.has(t))?'rgba(148,163,184,0.2)':'rgba(148,163,184,0.03)';});
@@ -681,6 +763,7 @@ document.querySelectorAll('.legend-item').forEach(item=>{
     document.querySelectorAll('.legend-item').forEach(el=>el.classList.remove('active'));
     item.classList.add('active');
     const catIds=new Set(nodes.filter(n=>n.cat===cat).map(n=>n.id));
+    dimSet=catIds;
     node.classed('node-dim',n=>!catIds.has(n.id)).classed('node-hl',n=>catIds.has(n.id));
     node.select('circle').transition().duration(300)
       .attr('fill-opacity',n=>catIds.has(n.id)?1:0.15)
@@ -693,7 +776,7 @@ document.querySelectorAll('.legend-item').forEach(item=>{
   });
 });
 
-window.addEventListener('resize',()=>{const nW=svgEl.clientWidth,nH=svgEl.clientHeight;sim.force('center',d3.forceCenter(nW/2,nH/2));sim.alpha(0.3).restart();});
+window.addEventListener('resize',()=>{const nW=svgEl.clientWidth,nH=svgEl.clientHeight;CX=nW/2;CY=nH/2;sim.alpha(0.3).restart();});
 
 // Expose graph API globally for learning path clicks
 window._graphAPI = { showDetail, highlightNode: hlNode };
