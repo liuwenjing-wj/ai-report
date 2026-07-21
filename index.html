@@ -78,6 +78,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 @keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 .node-dim{opacity:0.08!important}
 .node-hl circle{fill-opacity:1!important;stroke-opacity:0.9!important;stroke-width:3!important}
+.node-new circle{animation:pulseNew 2s ease-in-out 3}
+@keyframes pulseNew{0%,100%{stroke-opacity:0.4;stroke-width:1.5}50%{stroke-opacity:1;stroke-width:4}}
+.new-badge{font-size:8px;fill:#fbbf24;font-weight:700;pointer-events:none}
 @media(max-width:768px){
 .header h1{font-size:22px}.stats{gap:20px}.stat-num{font-size:28px}
 #graph-section{height:480px}.detail-panel{width:100%;right:-100%}
@@ -91,9 +94,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <h1>AI 知识月度报告</h1>
 <p>2026年7月1日 — 7月21日 · 物流产品经理专属</p>
 <div class="stats">
-<div class="stat"><div class="stat-num">45</div><div class="stat-label">知识点</div></div>
-<div class="stat"><div class="stat-num">15</div><div class="stat-label">练习题</div></div>
-<div class="stat"><div class="stat-num">8</div><div class="stat-label">知识域</div></div>
+<div class="stat"><div class="stat-num" id="stat-nodes">45</div><div class="stat-label">知识点</div></div>
+<div class="stat"><div class="stat-num" id="stat-exercises">15</div><div class="stat-label">练习题</div></div>
+<div class="stat"><div class="stat-num" id="stat-cats">8</div><div class="stat-label">知识域</div></div>
 </div>
 </div>
 
@@ -333,10 +336,40 @@ const exercises = [
 {date:'7/21',type:'场景应用题',diff:'进阶',scene:'你的WMS系统要接入大模型生成每日补货建议。安全团队要求必须有输出护栏。',question:'你会设计哪些具体的护栏规则？',answer:'1）格式校验——确保输出包含SKU编号、建议数量等结构化字段；2）数值校验——补货数量不超过库位容量、不能为负；3）业务校验——SKU是否存在于商品库；4）敏感信息过滤——不能包含供应商联系方式；5）操作护栏——AI只能"建议"不能"执行"，必须人工确认；6）日志审计——所有输出记录留痕。'}
 ];
 
+// ============ INCREMENTAL UPDATES ============
+(async () => {
+try {
+  const resp = await fetch('updates.json?v=' + Date.now());
+  if (resp.ok) {
+    const data = await resp.json();
+    if (data.nodes) {
+      const ids = new Set(nodes.map(n => n.id));
+      data.nodes.forEach(n => { if (!ids.has(n.id)) { n.isNew = true; nodes.push(n); ids.add(n.id); } });
+    }
+    if (data.edges) {
+      data.edges.forEach(e => {
+        if (!edges.some(x => x.source === e.source && x.target === e.target)) edges.push(e);
+      });
+    }
+    if (data.exercises) exercises.push(...data.exercises);
+    // Update header stats
+    document.getElementById('stat-nodes').textContent = nodes.length;
+    document.getElementById('stat-exercises').textContent = exercises.length;
+    document.getElementById('stat-cats').textContent = new Set(nodes.map(n => n.cat)).size;
+    // Update date range
+    if (data.lastDate) {
+      document.querySelector('.header p').textContent =
+        '2026年7月1日 — ' + data.lastDate + ' · 物流产品经理专属 · 持续更新中';
+    }
+  }
+} catch(e) { /* no updates yet */ }
+
 // ============ LEGEND ============
 const legendEl = document.getElementById('legend');
-Object.entries(CAT_COLORS).forEach(([cat, color]) => {
-  legendEl.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>${cat}</div>`;
+const allCats = [...new Set(nodes.map(n => n.cat))];
+allCats.forEach(cat => {
+  if (!CAT_COLORS[cat]) CAT_COLORS[cat] = '#94a3b8';
+  legendEl.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${CAT_COLORS[cat]}"></div>${cat}</div>`;
 });
 
 // ============ D3 GRAPH ============
@@ -381,15 +414,19 @@ const link = linkG.selectAll('line').data(edges).join('line').attr('stroke','rgb
 
 const nodeG = g.append('g');
 const node = nodeG.selectAll('g').data(nodes).join('g').attr('cursor','pointer')
+  .classed('node-new', d => !!d.isNew)
   .call(d3.drag().on('start',(e,d)=>{if(!e.active)simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
   .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y}).on('end',(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null}));
 
 node.append('circle').attr('r', d=>d.r).attr('fill', d => CAT_COLORS[d.cat])
-  .attr('fill-opacity', 0.7).attr('stroke', d => CAT_COLORS[d.cat]).attr('stroke-width', 1.5).attr('stroke-opacity', 0.4);
+  .attr('fill-opacity', 0.7).attr('stroke', d => CAT_COLORS[d.cat]).attr('stroke-width', d => d.isNew ? 3 : 1.5).attr('stroke-opacity', d => d.isNew ? 0.9 : 0.4);
 
 node.append('text').text(d => d.name)
   .attr('text-anchor','middle').attr('dy', d => d.r + 14).attr('fill','#94a3b8')
   .attr('font-size', d => d.name.length > 10 ? 8 : d.name.length > 7 ? 9 : 10).attr('pointer-events','none');
+
+node.filter(d => d.isNew).append('text').text('NEW')
+  .attr('class','new-badge').attr('text-anchor','middle').attr('dy', d => -d.r - 4);
 
 // Tooltip
 const tooltip = document.getElementById('tooltip');
@@ -467,7 +504,7 @@ graphSearchInput.addEventListener('input', () => {
 });
 
 // ============ EXERCISES ============
-const exTypes = ['全部','场景应用题','概念辨析题','决策判断题','PRD翻译题'];
+const exTypes = ['全部', ...new Set(exercises.map(e => e.type))];
 const tabsEl = document.getElementById('tabs');
 const container = document.getElementById('ex-container');
 let activeTab = '全部';
@@ -502,6 +539,8 @@ function highlight(text, query) { if(!query)return text; const r=new RegExp(`(${
 renderExercises();
 
 window.addEventListener('resize', () => { const nW=svgEl.clientWidth,nH=svgEl.clientHeight; simulation.force('center',d3.forceCenter(nW/2,nH/2)); simulation.alpha(0.3).restart(); });
+
+})(); // close async IIFE
 </script>
 </body>
 </html>
