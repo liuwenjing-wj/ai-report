@@ -1,6 +1,55 @@
 {
-  "lastDate": "7月21日",
-  "nodes": [],
-  "edges": [],
-  "exercises": []
+  "lastDate": "7月22日",
+  "nodes": [
+    {
+      "id": "moe_model",
+      "name": "MoE混合专家",
+      "cat": "前沿技术",
+      "desc": "MoE（Mixture of Experts）是一种模型架构，把大模型拆成多个专家子网络，每次推理只激活其中一部分。类比：一家物流公司不会让所有员工同时处理一个订单，而是按专长分工——报关找报关专家、仓储找仓储专家、运输找运输专家。MoE让模型在保持大参数量的同时推理速度接近小模型。",
+      "pm": "MoE模型性价比高——效果好但推理成本比同规模Dense模型低很多。但部署复杂度高，需要更多显存存储所有专家。选型时关注激活专家数和路由策略。"
+    },
+    {
+      "id": "vector_db",
+      "name": "向量数据库",
+      "cat": "数据工程",
+      "desc": "向量数据库专门存储和检索高维向量（Embedding），是RAG和语义搜索的基础设施。传统数据库按关键词匹配，向量数据库按语义相似度匹配。在物流知识库中，把所有操作手册、故障排查文档转成向量存进去，用户提问时找到语义最相近的文档片段返回。",
+      "pm": "选型重点看：支持的最大向量维度、检索延迟（P99<100ms为佳）、是否支持混合检索（向量+关键词）。主流选择：Milvus/Pinecone适合生产环境，FAISS适合原型验证。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "moe_model",
+      "target": "llm"
+    },
+    {
+      "source": "moe_model",
+      "target": "distillation"
+    },
+    {
+      "source": "moe_model",
+      "target": "model_select"
+    },
+    {
+      "source": "vector_db",
+      "target": "semantic_search"
+    },
+    {
+      "source": "vector_db",
+      "target": "graphrag"
+    },
+    {
+      "source": "vector_db",
+      "target": "agentic_rag"
+    }
+  ],
+  "exercises": [
+    {
+      "date": "7/22",
+      "type": "决策判断题",
+      "diff": "进阶",
+      "scene": "你的团队在做供应链知识库问答。算法同学给了两个RAG方案：方案A用FAISS做纯向量检索，方案B用Milvus做向量+关键词混合检索。方案A部署简单但只能语义匹配，方案B功能更全但运维成本高3倍。",
+      "question": "你会选哪个方案？考虑哪些因素？",
+      "answer": "取决于知识库的内容特点。如果知识库以操作手册、FAQ为主（用户问题措辞和文档差异大），选B混合检索效果更好。如果知识库结构化程度高且用户提问规范，A够用且更经济。建议先用A做MVP验证效果，如果语义检索命中率<70%再升级B。"
+    }
+  ]
 }
