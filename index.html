@@ -209,7 +209,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <!-- ======== SIDEBAR ======== -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo"><h2>AI 知识学习</h2></div>
-  <div class="sidebar-update">更新于 2026-07-22</div>
+  <div class="sidebar-update">更新于 2026-07-21</div>
   <nav class="sidebar-nav">
     <a class="nav-item active" data-target="sec-graph"><span class="nav-icon">🧠</span>知识大图</a>
     <a class="nav-item" data-target="sec-challenge"><span class="nav-icon">🎯</span>今日挑战</a>
@@ -439,7 +439,7 @@ window.addEventListener('scroll',()=>{
 // ---- Hero ----
 function parseExDate(d){const p=d.split('/');return new Date(2026,parseInt(p[0])-1,parseInt(p[1]));}
 function renderHeroChallenge(){
-  const sorted=[...exercises].sort((a,b)=>parseExDate(b.date)-parseExDate(a.date));
+  const sorted=[...exercises].map((e,i)=>({e,i})).sort((a,b)=>{const d=parseExDate(b.e.date)-parseExDate(a.e.date);return d!==0?d:b.i-a.i;}).map(x=>x.e);
   const ex=sorted[0];if(!ex)return;
   document.getElementById('hero-challenge').innerHTML=
     '<div class="hero-card"><div class="hero-badge"><span class="pulse"></span> 今日挑战</div>'+
@@ -462,7 +462,7 @@ function renderNewsEmpty(){document.getElementById('news-grid').innerHTML='<div 
 // ---- Exercise History ----
 function toggleHistory(){const b=document.getElementById('history-body'),t=document.getElementById('history-toggle'),tx=document.getElementById('history-toggle-text');const o=b.classList.toggle('show');t.classList.toggle('open',o);tx.textContent=o?'收起历史题目':'展开历史题目';}
 function renderExerciseHistory(){
-  const sorted=[...exercises].sort((a,b)=>parseExDate(b.date)-parseExDate(a.date));
+  const sorted=[...exercises].map((e,i)=>({e,i})).sort((a,b)=>{const d=parseExDate(b.e.date)-parseExDate(a.e.date);return d!==0?d:b.i-a.i;}).map(x=>x.e);
   const hist=sorted.slice(1);
   const types=['全部',...new Set(hist.map(e=>e.type))];
   const tabsEl=document.getElementById('history-tabs');
