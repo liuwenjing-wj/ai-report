@@ -1,0 +1,12 @@
+{
+  "articles": [
+    {
+      "title": "示例文章：如何用 AI 优化仓储拣货效率",
+      "url": "#",
+      "summary": "这是一条示例数据，替换为真实的 ATA 文章链接即可。格式：title（标题）、url（链接）、summary（摘要）、author（作者）、date（日期）、tags（标签数组）。",
+      "author": "示例作者",
+      "date": "2026-07",
+      "tags": ["示例"]
+    }
+  ]
+}

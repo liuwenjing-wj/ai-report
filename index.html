@@ -188,6 +188,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .new-badge{font-size:8px;fill:#fbbf24;font-weight:700;pointer-events:none;text-shadow:0 0 4px rgba(251,191,36,0.6)}
 .particle{pointer-events:none}
 
+/* ---- Articles ---- */
+.articles-section{max-width:900px;margin:0 auto;padding:0 20px 20px}
+.article-card{background:rgba(30,41,59,0.3);border:1px solid rgba(148,163,184,0.06);border-radius:12px;padding:18px 20px;margin-bottom:10px;transition:all 0.2s}
+.article-card:hover{background:rgba(30,41,59,0.5);border-color:rgba(148,163,184,0.12)}
+.article-title{font-size:14px;font-weight:500;color:#e2e8f0;margin-bottom:6px}
+.article-title a{color:#e2e8f0;text-decoration:none;display:flex;align-items:center;gap:8px}
+.article-title a:hover{color:#a5b4fc}
+.article-title a::after{content:'↗';font-size:11px;color:#64748b;flex-shrink:0}
+.article-summary{font-size:13px;color:#94a3b8;line-height:1.7;margin-bottom:8px}
+.article-meta{font-size:11px;color:#64748b;display:flex;gap:12px}
+
+/* ---- Skills ---- */
+.skills-section{max-width:900px;margin:0 auto;padding:0 20px 20px}
+.skill-card{background:rgba(30,41,59,0.3);border:1px solid rgba(148,163,184,0.06);border-radius:12px;padding:18px 20px;margin-bottom:10px;transition:all 0.2s;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.skill-card:hover{background:rgba(30,41,59,0.5);border-color:rgba(148,163,184,0.12)}
+.skill-info{flex:1}
+.skill-name{font-size:15px;font-weight:600;color:#e2e8f0;margin-bottom:6px}
+.skill-desc{font-size:13px;color:#94a3b8;line-height:1.7;margin-bottom:10px}
+.skill-meta{display:flex;align-items:center;gap:12px;font-size:11px;color:#64748b}
+.skill-dl-btn{padding:7px 18px;border-radius:8px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#a5b4fc;font-size:12px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;white-space:nowrap;flex-shrink:0;align-self:center}
+.skill-dl-btn:hover{background:rgba(99,102,241,0.25)}
+.admin-badge{display:inline-block;padding:2px 8px;border-radius:8px;background:rgba(251,191,36,0.12);color:#fbbf24;font-size:10px;margin-left:8px;vertical-align:middle}
+
 /* ---- Responsive ---- */
 @media(max-width:960px){
   body{margin-left:0}
@@ -215,6 +238,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <a class="nav-item" data-target="sec-challenge"><span class="nav-icon">🎯</span>今日挑战</a>
     <a class="nav-item" data-target="sec-practice"><span class="nav-icon">✏️</span>练习题库</a>
     <a class="nav-item" data-target="sec-news"><span class="nav-icon">📰</span>行业动态</a>
+    <a class="nav-item admin-nav" data-target="sec-articles" style="display:none"><span class="nav-icon">📝</span>ATA文章</a>
+    <a class="nav-item admin-nav" data-target="sec-skills" style="display:none"><span class="nav-icon">📦</span>Skill包</a>
   </nav>
   <div class="sidebar-footer"><span>供应链 PM 专属</span></div>
 </div>
@@ -291,6 +316,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 </div>
 <div class="news-section" id="news-section">
 <div class="news-grid" id="news-grid"></div>
+</div>
+</div>
+
+<!-- ======== ATA ARTICLES (admin only) ======== -->
+<div id="sec-articles" style="display:none">
+<div class="section-title">ATA 优质文章<span class="admin-badge">管理</span></div>
+<p class="section-desc">团队精选 ATA 技术文章，持续积累供应链 AI 知识</p>
+<div class="articles-section">
+<div id="articles-list"></div>
+</div>
+</div>
+
+<!-- ======== SKILL PACKAGES (admin only) ======== -->
+<div id="sec-skills" style="display:none">
+<div class="section-title">Skill 安装包<span class="admin-badge">管理</span></div>
+<p class="section-desc">团队共享的 AI Agent 技能包，下载安装即可使用</p>
+<div class="skills-section">
+<div id="skills-list"></div>
 </div>
 </div>
 
@@ -429,7 +472,7 @@ document.querySelectorAll('.nav-item').forEach(item=>{
     document.getElementById('sidebar').classList.remove('open');
   });
 });
-const sectionIds=['sec-graph','sec-challenge','sec-practice','sec-news'];
+const sectionIds=['sec-graph','sec-challenge','sec-practice','sec-news','sec-articles','sec-skills'];
 window.addEventListener('scroll',()=>{
   let cur=sectionIds[0];
   for(const id of sectionIds){const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=120)cur=id;}
@@ -592,6 +635,28 @@ function renderActiveNews(){
 document.querySelectorAll('.news-toggle-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{newsView=btn.dataset.date;updateNewsToggle();renderActiveNews();});
 });
+
+// ---- Admin Mode ----
+const isAdmin=new URLSearchParams(location.search).has('admin');
+if(isAdmin){
+  document.querySelectorAll('.admin-nav').forEach(el=>el.style.display='');
+  document.getElementById('sec-articles').style.display='';
+  document.getElementById('sec-skills').style.display='';
+  (async()=>{
+    try{
+      const r=await fetch('articles.json?v='+Date.now());
+      if(r.ok){const d=await r.json();if(d.articles&&d.articles.length){document.getElementById('articles-list').innerHTML=d.articles.map(a=>'<div class="article-card"><div class="article-title"><a href="'+a.url+'" target="_blank">'+a.title+'</a></div>'+(a.summary?'<div class="article-summary">'+a.summary+'</div>':'')+'<div class="article-meta">'+(a.author?'<span>'+a.author+'</span>':'')+(a.date?'<span>'+a.date+'</span>':'')+(a.tags?a.tags.map(t=>'<span class="news-tag">'+t+'</span>').join(''):'')+'</div></div>').join('');return;}}
+    }catch(e){}
+    document.getElementById('articles-list').innerHTML='<div class="news-empty">暂无文章，等待添加</div>';
+  })();
+  (async()=>{
+    try{
+      const r=await fetch('skills.json?v='+Date.now());
+      if(r.ok){const d=await r.json();if(d.skills&&d.skills.length){document.getElementById('skills-list').innerHTML=d.skills.map(s=>'<div class="skill-card"><div class="skill-info"><div class="skill-name">'+s.name+'</div><div class="skill-desc">'+s.description+'</div><div class="skill-meta">'+(s.version?'<span>v'+s.version+'</span>':'')+(s.author?'<span>'+s.author+'</span>':'')+(s.downloads?'<span>下载 '+s.downloads+'</span>':'')+'</div></div><a class="skill-dl-btn" href="'+s.downloadUrl+'" target="_blank">下载</a></div>').join('');return;}}
+    }catch(e){}
+    document.getElementById('skills-list').innerHTML='<div class="news-empty">暂无 Skill 包，等待添加</div>';
+  })();
+}
 
 renderExerciseHistory();
 

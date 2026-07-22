@@ -1,0 +1,12 @@
+{
+  "skills": [
+    {
+      "name": "示例 Skill：供应链日报生成器",
+      "description": "这是一条示例数据，替换为真实的 Skill 包信息即可。格式：name（名称）、description（描述）、version（版本号）、author（作者）、downloadUrl（下载链接）、downloads（下载次数）。",
+      "version": "1.0",
+      "author": "示例作者",
+      "downloadUrl": "#",
+      "downloads": 0
+    }
+  ]
+}
