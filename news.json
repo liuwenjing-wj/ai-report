@@ -1,5 +1,76 @@
 {
   "today": {
+    "date": "2026-07-23",
+    "items": [
+      {
+        "title": "Gemini 3.6 Flash 发布，内置 Computer Use",
+        "summary": "Google 于 7 月 22 日上线 Gemini 3.6 Flash，定价 $1.50/$7.50/M tokens，内置 Computer Use 能力，输出 token 效率提升 17%。该模型将多模态 Agent 所需的环境感知与操作能力打包进轻量版本，有望降低企业级自动化 Agent 的部署门槛，对智能客服、RPA 替代及供应链流程自动化均有直接影响。",
+        "tags": [
+          "大模型",
+          "Agent",
+          "自动化"
+        ],
+        "source": "AI Tools Recap · 7月22日"
+      },
+      {
+        "title": "Cognition SWE-1.7 提升代码 Agent 能力边界",
+        "summary": "Cognition 发布 SWE-1.7，FrontierCode 评分从 30.1% 提升至 42.3%，输出速度达 1000 tokens/s。工程类 Agent 在代码生成、调试与仓库理解上的可用性继续提高，意味着研发、运维与供应链数字化系统的自动化改造将获得更强的技术底座。",
+        "tags": [
+          "代码 Agent",
+          "研发自动化"
+        ],
+        "source": "AI Apps · 7月"
+      },
+      {
+        "title": "普渡机器人 PUDU D7 工业半人形机器人亮相 WAIC 2026",
+        "summary": "普渡机器人在 WAIC 2026 首次线下展出工业级半人形机器人 PUDU D7，采用「一脑多形」Physical Agent 架构，负载 14kg、作业高度 2 米，面向制造、仓储分拣与零售场景。普渡目前已在 85+ 国家出货超 13 万台商用服务机器人，具身智能正加速进入实体供应链环节。",
+        "tags": [
+          "机器人",
+          "具身智能",
+          "供应链"
+        ],
+        "source": "Pudu Robotics · 7月17日"
+      },
+      {
+        "title": "OpenAI 与 Anthropic 发布办公场景 Agent 产品",
+        "summary": "OpenAI 推出 ChatGPT Work，支持非技术用户基于授权数据构建文档、表格与 Web 应用；Anthropic 推出 Claude Cowork，可离线持续处理邮件、日历与文件任务。两款产品将 AI Agent 从实验性工具推进到日常办公流，预示着企业运营、采购、排程等流程的交互方式将被重塑。",
+        "tags": [
+          "Agent",
+          "企业应用"
+        ],
+        "source": "AI Apps · 7月"
+      },
+      {
+        "title": "台积电 Q2 净利润增长 77.4%，AI/HPC 占收入 66%",
+        "summary": "台积电第二季度净利润同比增长 77.4%，AI 与 HPC 芯片占季度收入 66%，并上调全年增长指引至 40% 以上。AI 算力需求仍是台积电业绩核心驱动力，也反映出云厂商与 AI 实验室在训练与推理基础设施上的持续高投入。",
+        "tags": [
+          "芯片",
+          "算力",
+          "供应链"
+        ],
+        "source": "AI Tools Recap · 7月"
+      },
+      {
+        "title": "中国考虑限制境外获取先进 AI 模型",
+        "summary": "报道称中国正考虑限制海外访问其最先进 AI 模型，DeepSeek、Qwen 等采用的开放权重策略可能面临转向。若政策落地，将影响全球开源生态、跨境 AI 供应链以及中国模型的海外商业化路径，也将成为国际 AI 治理与产业分工的新变量。",
+        "tags": [
+          "监管",
+          "开源模型"
+        ],
+        "source": "AI Tools Recap · 7月"
+      },
+      {
+        "title": "首个 LLM Agent 自主勒索软件攻击链被记录",
+        "summary": "Sysdig 发现名为 JADEPUFFER 的攻击链，首个 LLM Agent 可全程自主执行 600 多个 payload，无需人工逐步指挥。这一事件标志着 Agent 自主能力的双面性凸显，企业在部署 AI Agent 时需同步强化权限控制、行为审计与安全治理框架。",
+        "tags": [
+          "Agent 安全",
+          "网络安全"
+        ],
+        "source": "AI Tools Recap · 7月"
+      }
+    ]
+  },
+  "yesterday": {
     "date": "2026-07-22",
     "items": [
       {
@@ -55,83 +126,6 @@
           "行业动态"
         ],
         "source": "ThursdAI · 7月9日"
-      }
-    ]
-  },
-  "yesterday": {
-    "date": "2026-07-21",
-    "items": [
-      {
-        "title": "OpenAI 发布 GPT-5.6：旗舰版新增多智能体调度能力",
-        "summary": "GPT-5.6 分为 Sol/Terra/Luna 三个版本，其中 Sol 旗舰版新增 Ultra 多智能体模式，可同时调度多个 AI 协同完成复杂任务。Terra 主打企业级性价比，Luna 侧重低延迟实时问答并上线全双工语音模型。",
-        "tags": [
-          "大模型",
-          "多智能体"
-        ],
-        "source": "OpenAI · 7月10日"
-      },
-      {
-        "title": "DeepSeek-V4 发布：首创峰谷分时计费降低企业调用成本",
-        "summary": "DeepSeek-V4 在国内首创\"峰谷分时计费\"模式，大幅降低企业 API 调用成本。数学与代码能力保持顶尖水平，推理速度显著提升。7月24日将全面停用旧版 API。",
-        "tags": [
-          "大模型",
-          "成本优化"
-        ],
-        "source": "DeepSeek · 7月15日"
-      },
-      {
-        "title": "月之暗面推出 Kimi K3：全球首个开源 3 万亿级大模型",
-        "summary": "Kimi K3 参数规模达 2.8 万亿，通过协同优化整体扩展效率提升约 2.5 倍。能独立完成芯片构建、优化与验证，高效处理科研编程和深度金融研报生成。原生 480K 上下文。",
-        "tags": [
-          "大模型",
-          "开源"
-        ],
-        "source": "月之暗面 · 7月"
-      },
-      {
-        "title": "智谱 GLM-5.2：1M 超长上下文，Function Calling 达生产级",
-        "summary": "GLM-5.2 支持 100 万 Token 超长上下文窗口，Function Calling 达到生产级标准。以 MIT 协议全面开源 GLM 系列模型，产品已覆盖民生治理、工业制造、能源电力等 20 余个行业。",
-        "tags": [
-          "开源",
-          "Function Calling"
-        ],
-        "source": "智谱 AI · 7月上旬"
-      },
-      {
-        "title": "腾讯混元 Hy-3 发布：MoE 架构 256K 上下文免费商用",
-        "summary": "Hy-3 采用 MoE 混合专家架构，支持 256K 上下文且免费商用。与微信生态、数字人、短视频深度打通，Agent 能力突出。支持华为昇腾芯片部署，推动国产算力生态。",
-        "tags": [
-          "MoE",
-          "Agent"
-        ],
-        "source": "腾讯 · 7月6日"
-      },
-      {
-        "title": "Google 发布 Gemini-3.5 Pro：强化视频理解与 3D 解析",
-        "summary": "Gemini-3.5 Pro 采用全新训练基座，大幅强化视频理解、3D 解析和数学科研能力。原生对接搜索引擎，支持云端与端侧双部署模式。",
-        "tags": [
-          "大模型",
-          "多模态"
-        ],
-        "source": "Google · 7月17日"
-      },
-      {
-        "title": "AI 物流供应链市场预计 2034 年达 1965.8 亿美元",
-        "summary": "据 Global Market Insights 最新报告，全球 AI 在物流与供应链领域的市场规模预计从当前水平增长至 2034 年的 1965.8 亿美元，需求预测、智能调度和预测性维护是三大核心增长驱动力。",
-        "tags": [
-          "供应链",
-          "市场趋势"
-        ],
-        "source": "SDC Executive · 7月"
-      },
-      {
-        "title": "2026 被定义为\"智能体爆发年\"：从单 Agent 到多 Agent 协作",
-        "summary": "新华社报道指出，2026 年 AI Agent 从实验走向大规模落地，企业级多智能体系统开始覆盖订单-库存-排产-调度全链路。MCP 协议标准化和 Agent 编排框架成熟是两大推动力。",
-        "tags": [
-          "Agent",
-          "行业趋势"
-        ],
-        "source": "新华社 · 4月"
       }
     ]
   }
