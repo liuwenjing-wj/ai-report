@@ -196,15 +196,15 @@ function renderExerciseHistory(){
     const pageItems=filtered.slice(start,start+PAGE_SIZE);
     const c=document.getElementById('ex-container');
     if(!total){c.innerHTML='<div style="text-align:center;color:#475569;padding:20px">没有匹配的练习题</div>';return;}
-    let h='<div class="ex-table-wrap"><table class="ex-table"><thead><tr><th class="col-idx">序号</th><th class="col-date">日期</th><th class="col-tags">标签</th><th class="col-title">题目</th><th class="col-action">操作</th></tr></thead><tbody>';
+    let h='<div class="ex-table-wrap"><table class="ex-table"><thead><tr><th class="col-idx">序号</th><th class="col-date">日期</th><th class="col-tags">分类</th><th class="col-title">题目</th><th class="col-action">答案</th></tr></thead><tbody>';
     pageItems.forEach((ex,i)=>{
       const globalIdx=start+i;
       const isOpen=openAnswerIdx===globalIdx;
-      const truncScene=ex.scene.length>60?ex.scene.slice(0,60)+'...':ex.scene;
+      const fullText=ex.scene+(ex.question?' '+ex.question:'');
       h+='<tr><td class="col-idx">'+(start+i+1)+'</td>';
       h+='<td class="col-date">'+ex.date+'</td>';
       h+='<td class="col-tags"><span class="ex-tag-type">'+ex.type+'</span><span class="ex-tag-diff '+ex.diff+'">'+ex.diff+'</span></td>';
-      h+='<td class="col-title"><span class="ex-title-text" data-idx="'+globalIdx+'">'+truncScene+'</span></td>';
+      h+='<td class="col-title"><span class="ex-title-text" data-idx="'+globalIdx+'">'+fullText+'</span></td>';
       h+='<td class="col-action"><button class="ex-action-btn'+(isOpen?' open':'')+'" data-idx="'+globalIdx+'">'+(isOpen?'收起':'查看')+'</button></td></tr>';
       if(isOpen){
         h+='<tr class="ex-row-answer"><td colspan="5"><div class="ex-answer-text">'+ex.answer+'</div></td></tr>';
