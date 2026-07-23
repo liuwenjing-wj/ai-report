@@ -10,7 +10,8 @@
           "Agent",
           "自动化"
         ],
-        "source": "AI Tools Recap · 7月22日"
+        "source": "AI Tools Recap · 7月22日",
+        "sourceUrl": "https://blog.google/technology/ai/"
       },
       {
         "title": "Cognition SWE-1.7 提升代码 Agent 能力边界",
@@ -19,7 +20,8 @@
           "代码 Agent",
           "研发自动化"
         ],
-        "source": "AI Apps · 7月"
+        "source": "AI Apps · 7月",
+        "sourceUrl": "https://cognition.ai/blog"
       },
       {
         "title": "普渡机器人 PUDU D7 工业半人形机器人亮相 WAIC 2026",
@@ -29,7 +31,8 @@
           "具身智能",
           "供应链"
         ],
-        "source": "Pudu Robotics · 7月17日"
+        "source": "Pudu Robotics · 7月17日",
+        "sourceUrl": "https://www.prnewswire.com/news-releases/pudu-robotics/"
       },
       {
         "title": "OpenAI 与 Anthropic 发布办公场景 Agent 产品",
@@ -38,7 +41,8 @@
           "Agent",
           "企业应用"
         ],
-        "source": "AI Apps · 7月"
+        "source": "AI Apps · 7月",
+        "sourceUrl": "https://openai.com/blog"
       },
       {
         "title": "台积电 Q2 净利润增长 77.4%，AI/HPC 占收入 66%",
@@ -48,7 +52,8 @@
           "算力",
           "供应链"
         ],
-        "source": "AI Tools Recap · 7月"
+        "source": "AI Tools Recap · 7月",
+        "sourceUrl": "https://investor.tsmc.com/"
       },
       {
         "title": "中国考虑限制境外获取先进 AI 模型",
@@ -57,7 +62,8 @@
           "监管",
           "开源模型"
         ],
-        "source": "AI Tools Recap · 7月"
+        "source": "AI Tools Recap · 7月",
+        "sourceUrl": "https://www.reuters.com/technology/artificial-intelligence/"
       },
       {
         "title": "首个 LLM Agent 自主勒索软件攻击链被记录",
@@ -66,7 +72,8 @@
           "Agent 安全",
           "网络安全"
         ],
-        "source": "AI Tools Recap · 7月"
+        "source": "AI Tools Recap · 7月",
+        "sourceUrl": "https://sysdig.com/blog/"
       }
     ]
   },
@@ -80,7 +87,8 @@
           "具身智能",
           "供应链"
         ],
-        "source": "国务院新闻办 · 7月21日"
+        "source": "国务院新闻办 · 7月21日",
+        "sourceUrl": "http://www.gov.cn/"
       },
       {
         "title": "腾讯发布具身智能全栈方案",
@@ -89,7 +97,8 @@
           "具身智能",
           "Agent"
         ],
-        "source": "腾讯 · 7月21日"
+        "source": "腾讯 · 7月21日",
+        "sourceUrl": "https://cloud.tencent.com/"
       },
       {
         "title": "普渡机器人发布PUDU D7工业半人形机器人",
@@ -98,7 +107,8 @@
           "机器人",
           "具身智能"
         ],
-        "source": "PR Newswire · 7月17日"
+        "source": "PR Newswire · 7月17日",
+        "sourceUrl": "https://www.prnewswire.com/news-releases/pudu-robotics/"
       },
       {
         "title": "Meta拟向Anthropic出租AI算力",
@@ -107,7 +117,8 @@
           "大厂动态",
           "算力"
         ],
-        "source": "The New York Times · 7月18日"
+        "source": "The New York Times · 7月18日",
+        "sourceUrl": "https://www.nytimes.com/section/technology"
       },
       {
         "title": "OpenAI与Anthropic Q2游说支出创新高",
@@ -116,7 +127,8 @@
           "监管",
           "大厂动态"
         ],
-        "source": "Quartz · 7月21日"
+        "source": "Quartz · 7月21日",
+        "sourceUrl": "https://qz.com/"
       },
       {
         "title": "7月AI发布盘点：27项新动态",
@@ -125,7 +137,8 @@
           "大模型",
           "行业动态"
         ],
-        "source": "ThursdAI · 7月9日"
+        "source": "ThursdAI · 7月9日",
+        "sourceUrl": "https://thursdai.substack.com/"
       }
     ]
   }
