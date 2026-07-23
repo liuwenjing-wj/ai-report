@@ -393,8 +393,8 @@ const pCircles=pG.append('g').selectAll('circle').data(pts).join('circle')
 const zoomEl=document.getElementById('zoom-level');
 const zoom=d3.zoom().scaleExtent([0.3,3]).filter(e=>{if(e.type==='wheel')return e.ctrlKey||e.metaKey;return!e.button;}).on('zoom',e=>{g.attr('transform',e.transform);if(zoomEl)zoomEl.textContent=Math.round(e.transform.k*100)+'%';});
 svg.call(zoom);
-// Set initial zoom to 80%
-const initScale=0.8;
+// Set initial zoom to 90%
+const initScale=0.9;
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*(1-initScale)/2,H*(1-initScale)/2).scale(initScale));
 document.getElementById('graph-svg').addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey)e.preventDefault();},{passive:false});
 document.getElementById('zoom-in').addEventListener('click',()=>svg.transition().duration(300).call(zoom.scaleBy,1.4));
@@ -583,5 +583,10 @@ window.addEventListener('resize',()=>{const nW=svgEl.clientWidth,nH=svgEl.client
 
 // Expose graph API globally for learning path clicks
 window._graphAPI = { showDetail, highlightNode: hlNode };
+
+// ---- Back to Top ----
+const btt=document.getElementById('back-to-top');
+window.addEventListener('scroll',()=>{if(btt)btt.classList.toggle('show',window.scrollY>400);});
+if(btt)btt.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
 
 })(); // close async IIFE
