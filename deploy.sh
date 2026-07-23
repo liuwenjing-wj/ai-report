@@ -50,11 +50,12 @@ if [ -n "$HTML_FILE" ]; then
   SRC_DIR="$(dirname "$HTML_FILE")"
   [ -f "${SRC_DIR}/style.css" ] && cp "${SRC_DIR}/style.css" "${REPO_DIR}/style.css"
   [ -f "${SRC_DIR}/app.js" ] && cp "${SRC_DIR}/app.js" "${REPO_DIR}/app.js"
+  [ -f "${SRC_DIR}/data.json" ] && cp "${SRC_DIR}/data.json" "${REPO_DIR}/data.json"
 fi
 
 # ---- 检查是否有变更 ----
 CHANGED=0
-for f in index.html style.css app.js updates.json news.json articles.json skills.json; do
+for f in index.html style.css app.js data.json updates.json news.json articles.json skills.json; do
   if [ -f "$f" ]; then
     if ! git diff --quiet "$f" 2>/dev/null; then CHANGED=1; break; fi
     if git ls-files --error-unmatch "$f" >/dev/null 2>&1; then :; else
@@ -73,6 +74,7 @@ echo "📦 提交变更..."
 git add index.html
 [ -f style.css ] && git add style.css
 [ -f app.js ] && git add app.js
+[ -f data.json ] && git add data.json
 [ -f updates.json ] && git add updates.json
 [ -f news.json ] && git add news.json
 [ -f articles.json ] && git add articles.json
