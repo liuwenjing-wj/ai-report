@@ -393,13 +393,13 @@ const pCircles=pG.append('g').selectAll('circle').data(pts).join('circle')
 const zoomEl=document.getElementById('zoom-level');
 const zoom=d3.zoom().scaleExtent([0.3,3]).filter(e=>{if(e.type==='wheel')return e.ctrlKey||e.metaKey;return!e.button;}).on('zoom',e=>{g.attr('transform',e.transform);if(zoomEl)zoomEl.textContent=Math.round(e.transform.k*100)+'%';});
 svg.call(zoom);
-// Set initial zoom to 90%
-const initScale=0.9;
-svg.call(zoom.transform,d3.zoomIdentity.translate(W*(1-initScale)/2,H*(1-initScale)/2).scale(initScale));
+// Set initial zoom to 100%
+const initScale=1;
+svg.call(zoom.transform,d3.zoomIdentity);
 document.getElementById('graph-svg').addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey)e.preventDefault();},{passive:false});
 document.getElementById('zoom-in').addEventListener('click',()=>svg.transition().duration(300).call(zoom.scaleBy,1.4));
 document.getElementById('zoom-out').addEventListener('click',()=>svg.transition().duration(300).call(zoom.scaleBy,0.7));
-document.getElementById('zoom-reset').addEventListener('click',()=>svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity.translate(W*(1-initScale)/2,H*(1-initScale)/2).scale(initScale)));
+document.getElementById('zoom-reset').addEventListener('click',()=>svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity));
 let hv=true;svg.on('mousedown.hint',()=>{if(hv){document.getElementById('scroll-hint').style.opacity='0';hv=false;}});
 
 const cc={};edges.forEach(e=>{cc[e.source]=(cc[e.source]||0)+1;cc[e.target]=(cc[e.target]||0)+1;});
