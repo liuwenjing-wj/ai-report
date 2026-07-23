@@ -3,6 +3,7 @@ let nodes = [];
 let edges = [];
 let exercises = [];
 let learningPaths = [];
+let newIdSet = new Set();
 let scoreCorrect=0,scorePartial=0,scoreWrong=0,scoreTotal=0;
 function updateScoreDisplay(){
   const el=document.getElementById('session-score');
