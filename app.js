@@ -36,7 +36,7 @@ function renderHeroChallenge(){
   const sorted=[...exercises].map((e,i)=>({e,i})).sort((a,b)=>{const d=parseExDate(b.e.date)-parseExDate(a.e.date);return d!==0?d:b.i-a.i;}).map(x=>x.e);
   const ex=sorted[0];if(!ex)return;
   document.getElementById('hero-challenge').innerHTML=
-    '<div class="hero-card"><div class="hero-badge"><span class="pulse"></span> 今日挑战</div>'+
+    '<div class="hero-card">'+
     '<div class="hero-meta"><span class="hero-date">'+ex.date+'</span><span class="hero-diff '+ex.diff+'">'+ex.diff+'</span><span class="hero-type">'+ex.type+'</span></div>'+
     '<div class="hero-scene">'+ex.scene+'</div><div class="hero-q">'+ex.question+'</div>'+
     '<button class="hero-reveal" onclick="revealHeroAnswer()">查看答案</button>'+
@@ -395,12 +395,14 @@ node.filter(d=>newIdSet.has(d.id)).select('circle').style('filter',d=>'drop-shad
 
 node.append('text').text(d=>d.name).attr('text-anchor','middle').attr('dy',d=>d.r+14).attr('fill','#94a3b8').attr('font-size',d=>d.name.length>10?8:d.name.length>7?9:10).attr('pointer-events','none');
 node.filter(d=>newIdSet.has(d.id)).append('text').text('NEW').attr('class','new-badge').attr('text-anchor','middle').attr('dy',d=>-d.r-6);
+node.append('circle').attr('r',d=>Math.max(d.r*1.8,14)).attr('fill','transparent').attr('stroke','none').attr('pointer-events','all');
 
 const tt=document.getElementById('tooltip');
 node.on('mouseover',(e,d)=>{tt.querySelector('.tt-name').textContent=d.name;tt.querySelector('.tt-cat').textContent=d.cat;tt.style.opacity=1;d3.select(e.currentTarget).select('circle').transition().duration(200).attr('fill-opacity',1).attr('stroke-opacity',0.8).attr('stroke-width',3).style('filter','drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'60)');}).on('mousemove',e=>{tt.style.left=(e.clientX+16)+'px';tt.style.top=(e.clientY-10)+'px';}).on('mouseout',e=>{tt.style.opacity=0;if(!document.getElementById('detail-panel').classList.contains('active')&&!sA){d3.select(e.currentTarget).select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>newIdSet.has(d.id)?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');}});
 
-node.on('click',(e,d)=>{e.stopPropagation();showDetail(d);hlNode(d);});
+node.on('click',(e,d)=>{e.stopPropagation();targetSpeed=0;rotSpeed=0;clickedNode=d;showDetail(d);hlNode(d);});
 svg.on('click',()=>{hideDetail();if(!sA)resetHL();});
+svg.on('dblclick.zoom',null);
 
 sim.on('tick',()=>{});// sim only resolves forces; rendering in rotation loop
 
@@ -409,9 +411,10 @@ let rotY=0,rotSpeed=0.001,targetSpeed=0.001;
 let frameCount=0;
 let FOV=800,CX=W/2,CY=H/2;
 let dimSet=null;
+let clickedNode=null;
 
 nG.on('mouseover',()=>{targetSpeed=0;})
-    .on('mouseout',()=>{targetSpeed=0.001;});
+    .on('mouseout',()=>{if(!clickedNode)targetSpeed=0.001;});
 
 (function animate3D(){
   if(!graphVisible){requestAnimationFrame(animate3D);return;}
@@ -502,7 +505,7 @@ function showDetail(d){
   document.querySelectorAll('.dp-tag').forEach(tag=>{tag.addEventListener('click',()=>{const nd=nodes.find(n=>n.id===tag.dataset.id);if(nd){showDetail(nd);hlNode(nd);}});});
   p.classList.add('active');
 }
-function hideDetail(){document.getElementById('detail-panel').classList.remove('active');}
+function hideDetail(){document.getElementById('detail-panel').classList.remove('active');svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity);clickedNode=null;}
 document.getElementById('dp-close').addEventListener('click',()=>{hideDetail();if(!sA)resetHL();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideDetail();if(!sA)resetHL();}});
 
