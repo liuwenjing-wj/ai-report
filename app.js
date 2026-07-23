@@ -402,7 +402,7 @@ node.on('mouseover',(e,d)=>{tt.querySelector('.tt-name').textContent=d.name;tt.q
 
 node.on('mousedown',(e,d)=>{e.stopPropagation();targetSpeed=0;rotSpeed=0;clickedNode=d;showDetail(d);hlNode(d);});
 node.on('touchend',(e,d)=>{if(!e.defaultPrevented){var tc=e.changedTouches[0],dx=tc.clientX-(e.target._tsx||tc.clientX),dy=tc.clientY-(e.target._tsy||tc.clientY);if(dx*dx+dy*dy<225){e.preventDefault();e.stopPropagation();targetSpeed=0;rotSpeed=0;clickedNode=d;showDetail(d);hlNode(d);}}}).on('touchstart',(e)=>{e.target._tsx=e.touches[0].clientX;e.target._tsy=e.touches[0].clientY;});
-svg.on('mousedown',()=>{hideDetail();if(!sA)resetHL();});
+document.getElementById('graph-section').addEventListener('mousedown',(e)=>{if(!e.target.closest('[data-id]')){hideDetail();if(!sA)resetHL();}},true);
 svg.on('dblclick.zoom',null);
 
 sim.on('tick',()=>{});// sim only resolves forces; rendering in rotation loop
