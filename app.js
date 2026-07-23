@@ -172,33 +172,87 @@ function renderExerciseHistory(){
   const types=['全部',...new Set(hist.map(e=>e.type))];
   const tabsEl=document.getElementById('history-tabs');
   let activeTab='全部';
+  let curPage=1;
+  const PAGE_SIZE=10;
+  let openAnswerIdx=null;
   tabsEl.innerHTML='';
   types.forEach(t=>{
     const c=t==='全部'?hist.length:hist.filter(e=>e.type===t).length;
     const el=document.createElement('div');el.className='history-tab'+(t==='全部'?' active':'');el.textContent=t==='全部'?'全部 ('+c+')':t+' ('+c+')';
-    el.addEventListener('click',()=>{document.querySelectorAll('.history-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');activeTab=t;renderList();});
+    el.addEventListener('click',()=>{document.querySelectorAll('.history-tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');activeTab=t;curPage=1;openAnswerIdx=null;renderTable();});
     tabsEl.appendChild(el);
   });
-  document.getElementById('search-input').addEventListener('input',()=>renderList());
-  function renderList(){
+  document.getElementById('search-input').addEventListener('input',()=>{curPage=1;openAnswerIdx=null;renderTable();});
+  function getFiltered(){
     const q=document.getElementById('search-input').value.trim().toLowerCase();
-    const f=hist.filter(e=>activeTab==='全部'||e.type===activeTab);
-    const c=document.getElementById('ex-container');
-    if(!f.length){c.innerHTML='<div style="text-align:center;color:#475569;padding:20px">没有匹配的练习题</div>';return;}
-    const g={};f.forEach(e=>{if(!g[e.type])g[e.type]=[];g[e.type].push(e);});
-    let h='';
-    Object.entries(g).forEach(([type,items])=>{
-      h+='<div class="ex-group"><div class="ex-group-title">'+type+' <span class="ex-count">'+items.length+' 题</span></div>';
-      items.forEach((ex,i)=>{
-        const m=!q||ex.scene.toLowerCase().includes(q)||ex.question.toLowerCase().includes(q)||ex.answer.toLowerCase().includes(q);
-        const uid='h_'+type+'_'+i;
-        h+='<div class="ex-card'+(m?'':' hidden')+'"><div class="ex-meta"><span class="ex-date">'+ex.date+'</span><span class="ex-diff '+ex.diff+'">'+ex.diff+'</span></div><div class="ex-scene">'+ex.scene+'</div><div class="ex-q">'+ex.question+'</div><button class="ex-toggle" onclick="toggleHistAnswer(\''+uid+'\',this)">查看答案</button><div class="ex-answer" id="'+uid+'">'+ex.answer+'</div><div class="ex-score-row" id="s_'+uid+'" style="display:none"><button class="score-btn correct" onclick="scoreHist(this,1)">答对了</button><button class="score-btn partial" onclick="scoreHist(this,0.5)">部分对</button><button class="score-btn wrong" onclick="scoreHist(this,0)">答错了</button></div></div>';
-      });
-      h+='</div>';
-    });
-    c.innerHTML=h;
+    return hist.filter(e=>(activeTab==='全部'||e.type===activeTab)&&(!q||e.scene.toLowerCase().includes(q)||e.question.toLowerCase().includes(q)||e.answer.toLowerCase().includes(q)));
   }
-  renderList();
+  function renderTable(){
+    const filtered=getFiltered();
+    const total=filtered.length;
+    const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+    if(curPage>totalPages)curPage=totalPages;
+    const start=(curPage-1)*PAGE_SIZE;
+    const pageItems=filtered.slice(start,start+PAGE_SIZE);
+    const c=document.getElementById('ex-container');
+    if(!total){c.innerHTML='<div style="text-align:center;color:#475569;padding:20px">没有匹配的练习题</div>';return;}
+    let h='<div class="ex-table-wrap"><table class="ex-table"><thead><tr><th class="col-idx">序号</th><th class="col-date">日期</th><th class="col-tags">标签</th><th class="col-title">题目</th><th class="col-action">操作</th></tr></thead><tbody>';
+    pageItems.forEach((ex,i)=>{
+      const globalIdx=start+i;
+      const isOpen=openAnswerIdx===globalIdx;
+      const truncScene=ex.scene.length>60?ex.scene.slice(0,60)+'...':ex.scene;
+      h+='<tr><td class="col-idx">'+(start+i+1)+'</td>';
+      h+='<td class="col-date">'+ex.date+'</td>';
+      h+='<td class="col-tags"><span class="ex-tag-type">'+ex.type+'</span><span class="ex-tag-diff '+ex.diff+'">'+ex.diff+'</span></td>';
+      h+='<td class="col-title"><span class="ex-title-text" data-idx="'+globalIdx+'">'+truncScene+'</span></td>';
+      h+='<td class="col-action"><button class="ex-action-btn'+(isOpen?' open':'')+'" data-idx="'+globalIdx+'">'+(isOpen?'收起':'查看')+'</button></td></tr>';
+      if(isOpen){
+        h+='<tr class="ex-row-answer"><td colspan="5"><div class="ex-answer-text">'+ex.answer+'</div></td></tr>';
+      }
+    });
+    h+='</tbody></table></div>';
+    // Pagination
+    h+='<div class="ex-pagination">';
+    h+='<button class="ex-page-btn" data-page="prev"'+(curPage<=1?' disabled':'')+'>上一页</button>';
+    for(let p=1;p<=totalPages;p++){
+      if(totalPages>7&&Math.abs(p-curPage)>2&&p!==1&&p!==totalPages){
+        if(p===2||p===totalPages-1)h+='<span class="ex-page-info">...</span>';
+        continue;
+      }
+      h+='<button class="ex-page-btn'+(p===curPage?' active':'')+'" data-page="'+p+'">'+p+'</button>';
+    }
+    h+='<button class="ex-page-btn" data-page="next"'+(curPage>=totalPages?' disabled':'')+'>下一页</button>';
+    h+='<span class="ex-page-info">'+curPage+'/'+totalPages+'</span>';
+    h+='</div>';
+    h+='<div class="ex-total">共 '+total+' 条记录</div>';
+    c.innerHTML=h;
+    // Event delegation for buttons
+    c.querySelectorAll('.ex-action-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const idx=parseInt(btn.dataset.idx);
+        openAnswerIdx=openAnswerIdx===idx?null:idx;
+        renderTable();
+      });
+    });
+    c.querySelectorAll('.ex-title-text').forEach(sp=>{
+      sp.addEventListener('click',()=>{
+        const idx=parseInt(sp.dataset.idx);
+        openAnswerIdx=openAnswerIdx===idx?null:idx;
+        renderTable();
+      });
+    });
+    c.querySelectorAll('.ex-page-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const p=btn.dataset.page;
+        if(p==='prev')curPage=Math.max(1,curPage-1);
+        else if(p==='next')curPage=Math.min(totalPages,curPage+1);
+        else curPage=parseInt(p);
+        openAnswerIdx=null;
+        renderTable();
+      });
+    });
+  }
+  renderTable();
 }
 function toggleHistAnswer(uid,btn){const a=document.getElementById(uid);a.classList.toggle('show');btn.textContent=a.classList.contains('show')?'收起答案':'查看答案';const s=document.getElementById('s_'+uid);if(s&&a.classList.contains('show'))s.style.display='flex';}
 function scoreHist(btn,v){scoreTotal++;if(v===1)scoreCorrect++;else if(v===0.5)scorePartial++;else scoreWrong++;btn.parentElement.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');updateScoreDisplay();}
@@ -544,8 +598,11 @@ document.getElementById('dp-close').addEventListener('click',()=>{hideDetail();i
 
 // Graph search (centered)
 const gsi=document.getElementById('graph-search-input'),mce=document.getElementById('match-count');
+const scb=document.getElementById('search-clear');
+function clearSearch(){gsi.value='';sA=false;lA=null;resetHL();mce.textContent='';scb.classList.remove('show');}
 gsi.addEventListener('input',()=>{
   const q=gsi.value.trim().toLowerCase();
+  scb.classList.toggle('show',q.length>0);
   if(!q){sA=false;lA=null;resetHL();mce.textContent='';return;}
   sA=true;lA=null;
   document.querySelectorAll('.legend-item.active').forEach(el=>el.classList.remove('active'));
@@ -556,13 +613,14 @@ gsi.addEventListener('input',()=>{
   node.classed('node-dim',n=>!mIds.has(n.id)).classed('node-hl',n=>mIds.has(n.id));
   link.transition().duration(200).attr('stroke',e=>{const s=typeof e.source==='object'?e.source.id:e.source,t=typeof e.target==='object'?e.target.id:e.target;return(mIds.has(s)&&mIds.has(t))?'rgba(148,163,184,0.4)':'rgba(148,163,184,0.08)';});
 });
+scb.addEventListener('click',clearSearch);
 
 // Legend click: highlight nodes by category (toggle on/off, mutually exclusive with search)
 document.querySelectorAll('.legend-item').forEach(item=>{
   item.addEventListener('click',()=>{
     const cat=item.dataset.cat;
     if(lA===cat){lA=null;resetHL();return;}
-    lA=cat;sA=false;gsi.value='';mce.textContent='';
+    lA=cat;sA=false;gsi.value='';mce.textContent='';scb.classList.remove('show');
     document.querySelectorAll('.legend-item').forEach(el=>el.classList.remove('active'));
     item.classList.add('active');
     const catIds=new Set(nodes.filter(n=>n.cat===cat).map(n=>n.id));

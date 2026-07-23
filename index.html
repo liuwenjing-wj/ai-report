@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260723141622">
+<link rel="stylesheet" href="style.css?v=20260723151733">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -45,7 +45,7 @@
   </div>
   <div class="sidebar-update" id="sidebar-update">更新于 --</div>
   <nav class="sidebar-nav">
-    <a class="nav-item active" data-target="sec-graph"><span class="nav-icon">🧠</span>知识大图</a>
+    <a class="nav-item active" data-target="sec-graph"><span class="nav-icon">🧠</span>知识大脑</a>
     <a class="nav-item" data-target="sec-challenge"><span class="nav-icon">🎯</span>每日一练</a>
     <a class="nav-item" data-target="sec-practice"><span class="nav-icon">✏️</span>练习题库</a>
     <a class="nav-item" data-target="sec-news"><span class="nav-icon">📰</span>行业动态</a>
@@ -58,12 +58,13 @@
 
 <!-- ======== KNOWLEDGE GRAPH ======== -->
 <div id="sec-graph">
-<div class="section-title">知识大图</div>
+<div class="section-title">知识大脑</div>
 <p class="section-desc">点击节点查看详情，拖拽调整布局，按住 ⌘/Ctrl 滚动缩放</p>
 <div id="graph-section">
 <div class="graph-search-center">
 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
 <input type="text" id="graph-search-input" placeholder="搜索知识点（支持模糊匹配）...">
+<button class="search-clear" id="search-clear" title="清除搜索">×</button>
 <span class="match-count" id="match-count"></span>
 </div>
 <div class="zoom-controls">
@@ -152,6 +153,6 @@
 <!-- ======== BACK TO TOP ======== -->
 <button class="back-to-top" id="back-to-top" title="返回顶部">↑</button>
 
-<script src="app.js?v=20260723141622"></script>
+<script src="app.js?v=20260723151733"></script>
 </body>
 </html>
