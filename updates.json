@@ -1,5 +1,6 @@
 {
   "lastDate": "7月23日",
+  "newNodeIds": ["vlm", "ai_workflow", "structured_output"],
   "nodes": [
     {
       "id": "moe_model",

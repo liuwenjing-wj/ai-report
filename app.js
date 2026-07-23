@@ -4,6 +4,8 @@ const CAT_COLORS = {
 '前沿技术':'#c084fc','产品方法论':'#67e8f9'
 };
 
+let newIdSet = new Set();
+
 const nodes = [
 {id:'hallucination',name:'AI幻觉',cat:'AI基础与模型',desc:'大模型有时会一本正经地生成完全错误的内容，就像一个自信满满的实习生编造数据——他自己不觉得有问题，但信息是假的。在物流场景中，AI可能推荐一个不存在的库位、编造不存在的供应商交期，而用户看到AI输出往往会默认信任。',pm:'产品层面要加两道防线：一是让系统自动校验AI推荐的库位/SKU是否真实存在，二是关键操作（如补货、调拨）必须有人工确认步骤。AI只给建议，决策权留给人。'},
 {id:'classify_regress',name:'分类 vs 回归',cat:'AI基础与模型',desc:'分类和回归是AI的两种基本任务类型。分类是判断"是什么"——比如这个订单是否异常、这个包裹是否破损，输出是类别标签。回归是预测"多少"——比如配送需要几天、库存还剩多少件，输出是数值。',pm:'搞混任务类型会导致选错模型和评估指标。在TMS中预测配送时效是回归任务，如果你跟算法同学说"帮我做个分类"，方向就错了。记住这个判断口诀：判断类别用分类，预测数值用回归。'},
@@ -159,7 +161,7 @@ function revealHeroAnswer(){document.getElementById('hero-answer').classList.add
 function scoreHero(v){scoreTotal++;if(v===1)scoreCorrect++;else if(v===0.5)scorePartial++;else scoreWrong++;document.querySelectorAll('.hero-score-row .score-btn').forEach(b=>b.classList.remove('active'));if(v===1)document.querySelector('.hero-score-row .correct').classList.add('active');else if(v===0.5)document.querySelector('.hero-score-row .partial').classList.add('active');else document.querySelector('.hero-score-row .wrong').classList.add('active');updateScoreDisplay();}
 
 // ---- News ----
-function renderNews(items){document.getElementById('news-grid').innerHTML=items.map(n=>'<div class="news-card">'+(n.tags?'<div>'+n.tags.map(t=>'<span class="news-tag">'+t+'</span>').join('')+'</div>':'')+'<div class="news-title">'+n.title+'</div><div class="news-summary">'+(n.summary||'')+'</div>'+(n.source?'<div class="news-source">'+n.source+'</div>':'')+'</div>').join('');}
+function renderNews(items){document.getElementById('news-grid').innerHTML=items.map(n=>'<div class="news-card">'+(n.tags?'<div>'+n.tags.map(t=>'<span class="news-tag">'+t+'</span>').join('')+'</div>':'')+'<div class="news-title">'+n.title+'</div><div class="news-summary">'+(n.summary||'')+'</div>'+(n.source?'<div class="news-source">'+(n.sourceUrl?'<a href="'+n.sourceUrl+'" target="_blank" style="color:#a5b4fc;text-decoration:none">'+n.source+' ↗</a>':n.source)+'</div>':'')+'</div>').join('');}
 function renderNewsEmpty(){document.getElementById('news-grid').innerHTML='<div class="news-empty">暂无行业热点数据，定时任务将在下次推送时同步更新</div>';}
 
 // ---- Exercise History ----
@@ -238,11 +240,21 @@ function renderLearningPaths(){
 
 // ---- Incremental updates ----
 (async()=>{
+// ---- Welcome Popup ----
+const wMsgs=['你终于来了','嘿，今天学点啥？','知识充电站营业中','每天进步一点点'];
+let wIdx=0;
+const wEl=document.getElementById('welcome-text');
+const wTimer=setInterval(()=>{wIdx=(wIdx+1)%wMsgs.length;wEl.style.opacity='0';setTimeout(()=>{wEl.textContent=wMsgs[wIdx];wEl.style.opacity='1';},300);},3000);
+function closeWelcome(){clearInterval(wTimer);const o=document.getElementById('welcome-overlay');if(o){o.style.transition='opacity 0.3s';o.style.opacity='0';setTimeout(()=>o.remove(),300);}}
+const wBtn=document.getElementById('welcome-btn');if(wBtn)wBtn.addEventListener('click',closeWelcome);
+const wOv=document.getElementById('welcome-overlay');if(wOv)wOv.addEventListener('click',e=>{if(e.target.id==='welcome-overlay')closeWelcome();});
+
 try{
   const r=await fetch('updates.json?v='+Date.now());
   if(r.ok){
     const d=await r.json();
-    if(d.nodes){const ids=new Set(nodes.map(n=>n.id));d.nodes.forEach(n=>{if(!ids.has(n.id)){n.isNew=true;nodes.push(n);ids.add(n.id);}});}
+    if(d.nodes){const ids=new Set(nodes.map(n=>n.id));d.nodes.forEach(n=>{if(!ids.has(n.id)){nodes.push(n);ids.add(n.id);}});}
+    if(d.newNodeIds)d.newNodeIds.forEach(id=>newIdSet.add(id));
     if(d.edges){d.edges.forEach(e=>{if(!edges.some(x=>x.source===e.source&&x.target===e.target))edges.push(e);});}
     if(d.exercises)d.exercises.forEach(e=>exercises.push(e));
     const sn=document.getElementById('stat-nodes'),se=document.getElementById('stat-exercises'),sc=document.getElementById('stat-cats');
@@ -291,6 +303,18 @@ function renderActiveNews(){
   }catch(e){}
   updateNewsToggle();
   renderActiveNews();
+  // ---- News Ticker ----
+  const tItems=(newsData.today&&newsData.today.items)?newsData.today.items:fallbackNews;
+  const tTitles=tItems.map(i=>i.title);
+  const tEl=document.getElementById('ticker-content');
+  if(tEl&&tTitles.length){
+    const tHTML=tTitles.map(t=>'<span>'+t+'</span>').join('');
+    tEl.innerHTML=tHTML+tHTML;
+    document.getElementById('ticker-more').addEventListener('click',()=>{
+      document.getElementById('sec-news').scrollIntoView({behavior:'smooth'});
+      setTimeout(()=>{document.querySelectorAll('.news-card').forEach((c,i)=>{setTimeout(()=>{c.classList.add('highlight');setTimeout(()=>c.classList.remove('highlight'),2000);},i*120);});},600);
+    });
+  }
 })();
 document.querySelectorAll('.news-toggle-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{newsView=btn.dataset.date;updateNewsToggle();renderActiveNews();});
@@ -388,19 +412,19 @@ const sim=d3.forceSimulation(nodes)
   .force('radial',d3.forceRadial(R,0,0).strength(0.12));
 
 const lG=g.append('g');
-const link=lG.selectAll('line').data(edges).join('line').attr('stroke','#94a3b8').attr('stroke-width',1);
+const link=lG.selectAll('line').data(edges).join('line').attr('stroke','#64748b').attr('stroke-width',1);
 
 const nG=g.append('g');
-const node=nG.selectAll('g').data(nodes).join('g').attr('cursor','pointer').classed('node-new',d=>!!d.isNew).attr('data-id',d=>d.id);
+const node=nG.selectAll('g').data(nodes).join('g').attr('cursor','pointer').classed('node-new',d=>newIdSet.has(d.id)).attr('data-id',d=>d.id);
 
-node.append('circle').attr('r',d=>d.r).attr('fill',d=>CAT_COLORS[d.cat]).attr('fill-opacity',0.7).attr('stroke',d=>CAT_COLORS[d.cat]).attr('stroke-width',d=>d.isNew?3:1.5).attr('stroke-opacity',d=>d.isNew?0.9:0.4);
-node.filter(d=>d.isNew).select('circle').style('filter',d=>'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)');
+node.append('circle').attr('r',d=>d.r).attr('fill',d=>CAT_COLORS[d.cat]).attr('fill-opacity',0.7).attr('stroke',d=>CAT_COLORS[d.cat]).attr('stroke-width',d=>newIdSet.has(d.id)?3:1.5).attr('stroke-opacity',d=>newIdSet.has(d.id)?0.9:0.4);
+node.filter(d=>newIdSet.has(d.id)).select('circle').style('filter',d=>'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)');
 
 node.append('text').text(d=>d.name).attr('text-anchor','middle').attr('dy',d=>d.r+14).attr('fill','#94a3b8').attr('font-size',d=>d.name.length>10?8:d.name.length>7?9:10).attr('pointer-events','none');
-node.filter(d=>d.isNew).append('text').text('NEW').attr('class','new-badge').attr('text-anchor','middle').attr('dy',d=>-d.r-6);
+node.filter(d=>newIdSet.has(d.id)).append('text').text('NEW').attr('class','new-badge').attr('text-anchor','middle').attr('dy',d=>-d.r-6);
 
 const tt=document.getElementById('tooltip');
-node.on('mouseover',(e,d)=>{tt.querySelector('.tt-name').textContent=d.name;tt.querySelector('.tt-cat').textContent=d.cat;tt.style.opacity=1;d3.select(e.currentTarget).select('circle').transition().duration(200).attr('fill-opacity',1).attr('stroke-opacity',0.8).attr('stroke-width',3).style('filter','drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'60)');}).on('mousemove',e=>{tt.style.left=(e.clientX+16)+'px';tt.style.top=(e.clientY-10)+'px';}).on('mouseout',e=>{tt.style.opacity=0;if(!document.getElementById('detail-panel').classList.contains('active')&&!sA){d3.select(e.currentTarget).select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>d.isNew?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');}});
+node.on('mouseover',(e,d)=>{tt.querySelector('.tt-name').textContent=d.name;tt.querySelector('.tt-cat').textContent=d.cat;tt.style.opacity=1;d3.select(e.currentTarget).select('circle').transition().duration(200).attr('fill-opacity',1).attr('stroke-opacity',0.8).attr('stroke-width',3).style('filter','drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'60)');}).on('mousemove',e=>{tt.style.left=(e.clientX+16)+'px';tt.style.top=(e.clientY-10)+'px';}).on('mouseout',e=>{tt.style.opacity=0;if(!document.getElementById('detail-panel').classList.contains('active')&&!sA){d3.select(e.currentTarget).select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>newIdSet.has(d.id)?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');}});
 
 node.on('click',(e,d)=>{e.stopPropagation();showDetail(d);hlNode(d);});
 svg.on('click',()=>{hideDetail();if(!sA)resetHL();});
@@ -482,9 +506,9 @@ let sA=false,lA=null;
 function resetHL(){
   dimSet=null;
   node.classed('node-dim',false).classed('node-hl',false);
-  node.select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>d.isNew?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');
+  node.select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>newIdSet.has(d.id)?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');
   node.select('text').transition().duration(300).attr('fill-opacity',1);
-  link.transition().duration(300).attr('stroke','#94a3b8').attr('stroke-width',1);
+  link.transition().duration(300).attr('stroke','#64748b').attr('stroke-width',1);
   document.querySelectorAll('.legend-item.active').forEach(el=>el.classList.remove('active'));
   lA=null;
 }

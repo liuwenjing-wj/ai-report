@@ -4,14 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 知识学习</title>
-<link rel="stylesheet" href="style.css?v=20260722165459">
+<link rel="stylesheet" href="style.css?v=20260723111733">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 
+<!-- ======== WELCOME OVERLAY ======== -->
+<div class="welcome-overlay" id="welcome-overlay">
+<div class="welcome-card">
+<div class="welcome-emoji">🧚</div>
+<div class="welcome-text" id="welcome-text">你终于来了</div>
+<div class="welcome-sub">今天又可以进步一点点 💪🏻</div>
+<button class="welcome-btn" id="welcome-btn">冲</button>
+</div>
+</div>
+
+<!-- ======== NEWS TICKER ======== -->
+<div class="news-ticker" id="news-ticker">
+<div class="ticker-label">📢 今日动态</div>
+<div class="ticker-track"><div class="ticker-content" id="ticker-content"></div></div>
+<button class="ticker-more" id="ticker-more">查看更多 →</button>
+</div>
+
 <!-- ======== SIDEBAR ======== -->
 <div class="sidebar" id="sidebar">
-  <div class="sidebar-logo"><h2>AI 知识学习</h2></div>
+  <div class="sidebar-logo">
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg width="34" height="30" viewBox="0 0 52 46" fill="none">
+        <text x="13" y="23" text-anchor="middle" font-size="22" font-weight="800" fill="#60a5fa" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif">A</text>
+        <text x="39" y="23" text-anchor="middle" font-size="22" font-weight="800" fill="#a78bfa" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif">I</text>
+        <path d="M15 32 Q26 41 37 32" stroke="#f472b6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span style="font-size:12px;font-weight:600;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap">每日10分钟</span>
+    </div>
+  </div>
   <div class="sidebar-update" id="sidebar-update">更新于 --</div>
   <nav class="sidebar-nav">
     <a class="nav-item active" data-target="sec-graph"><span class="nav-icon">🧠</span>知识大图</a>
@@ -117,6 +143,6 @@
 </div>
 </div>
 
-<script src="app.js?v=20260722165459"></script>
+<script src="app.js?v=20260723111733"></script>
 </body>
 </html>
