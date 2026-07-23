@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 知识学习</title>
-<link rel="stylesheet" href="style.css?v=20260723111733">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20260723113847">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
@@ -23,19 +26,22 @@
 <div class="news-ticker" id="news-ticker">
 <div class="ticker-label">📢 今日动态</div>
 <div class="ticker-track"><div class="ticker-content" id="ticker-content"></div></div>
-<button class="ticker-more" id="ticker-more">查看更多 →</button>
 </div>
 
 <!-- ======== SIDEBAR ======== -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
-      <svg width="34" height="30" viewBox="0 0 52 46" fill="none">
-        <text x="13" y="23" text-anchor="middle" font-size="22" font-weight="800" fill="#60a5fa" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif">A</text>
-        <text x="39" y="23" text-anchor="middle" font-size="22" font-weight="800" fill="#a78bfa" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif">I</text>
-        <path d="M15 32 Q26 41 37 32" stroke="#f472b6" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <div class="logo-wrap">
+      <svg width="52" height="46" viewBox="0 0 60 54" fill="none">
+        <text x="16" y="28" text-anchor="middle" font-size="28" font-weight="900" fill="#60a5fa" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif">A</text>
+        <text x="44" y="28" text-anchor="middle" font-size="28" font-weight="900" fill="#a78bfa" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif">I</text>
+        <path d="M16 38 Q30 50 44 38" stroke="#f472b6" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <circle cx="8" cy="34" r="4" fill="#f472b6" opacity="0.25"/>
+        <circle cx="52" cy="34" r="4" fill="#f472b6" opacity="0.25"/>
+        <circle cx="54" cy="6" r="2" fill="#fbbf24" opacity="0.7"/>
+        <path d="M54 2 L54 10 M50 6 L58 6" stroke="#fbbf24" stroke-width="1.2" opacity="0.5" stroke-linecap="round"/>
       </svg>
-      <span style="font-size:12px;font-weight:600;background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap">每日10分钟</span>
+      <span class="logo-text">每日10分钟</span>
     </div>
   </div>
   <div class="sidebar-update" id="sidebar-update">更新于 --</div>
@@ -143,6 +149,6 @@
 </div>
 </div>
 
-<script src="app.js?v=20260723111733"></script>
+<script src="app.js?v=20260723113847"></script>
 </body>
 </html>
