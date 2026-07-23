@@ -401,7 +401,8 @@ const tt=document.getElementById('tooltip');
 node.on('mouseover',(e,d)=>{tt.querySelector('.tt-name').textContent=d.name;tt.querySelector('.tt-cat').textContent=d.cat;tt.style.opacity=1;d3.select(e.currentTarget).select('circle').transition().duration(200).attr('fill-opacity',1).attr('stroke-opacity',0.8).attr('stroke-width',3).style('filter','drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'60)');}).on('mousemove',e=>{tt.style.left=(e.clientX+16)+'px';tt.style.top=(e.clientY-10)+'px';}).on('mouseout',e=>{tt.style.opacity=0;if(!document.getElementById('detail-panel').classList.contains('active')&&!sA){d3.select(e.currentTarget).select('circle').transition().duration(300).attr('fill-opacity',0.7).attr('stroke-opacity',0.4).attr('stroke-width',1.5).style('filter',d=>newIdSet.has(d.id)?'drop-shadow(0 0 8px '+CAT_COLORS[d.cat]+'80)':'none');}});
 
 node.on('mousedown',(e,d)=>{e.stopPropagation();targetSpeed=0;rotSpeed=0;clickedNode=d;showDetail(d);hlNode(d);});
-svg.on('click',()=>{hideDetail();if(!sA)resetHL();});
+node.on('touchend',(e,d)=>{if(!e.defaultPrevented){var tc=e.changedTouches[0],dx=tc.clientX-(e.target._tsx||tc.clientX),dy=tc.clientY-(e.target._tsy||tc.clientY);if(dx*dx+dy*dy<225){e.preventDefault();e.stopPropagation();targetSpeed=0;rotSpeed=0;clickedNode=d;showDetail(d);hlNode(d);}}}).on('touchstart',(e)=>{e.target._tsx=e.touches[0].clientX;e.target._tsy=e.touches[0].clientY;});
+svg.on('mousedown',()=>{hideDetail();if(!sA)resetHL();});
 svg.on('dblclick.zoom',null);
 
 sim.on('tick',()=>{});// sim only resolves forces; rendering in rotation loop
@@ -505,7 +506,7 @@ function showDetail(d){
   document.querySelectorAll('.dp-tag').forEach(tag=>{tag.addEventListener('click',()=>{const nd=nodes.find(n=>n.id===tag.dataset.id);if(nd){showDetail(nd);hlNode(nd);}});});
   p.classList.add('active');
 }
-function hideDetail(){document.getElementById('detail-panel').classList.remove('active');svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity);clickedNode=null;}
+function hideDetail(){document.getElementById('detail-panel').classList.remove('active');svg.transition().duration(400).call(zoom.transform,d3.zoomIdentity);clickedNode=null;targetSpeed=0.001;}
 document.getElementById('dp-close').addEventListener('click',()=>{hideDetail();if(!sA)resetHL();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideDetail();if(!sA)resetHL();}});
 
