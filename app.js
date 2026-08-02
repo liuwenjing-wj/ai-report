@@ -506,11 +506,11 @@ let dimSet=null;
 nG.on('mouseover',()=>{targetSpeed=0;})
     .on('mouseout',()=>{targetSpeed=0.001;});
 
-// Pre-cache node sub-selections for depth effects (avoids per-frame DOM queries)
-const nodeCircles=node.select('circle');
-const nodeTexts=node.selectAll('text');
+let frameCount=0;
 
 (function animate3D(){
+try{
+  frameCount++;
   // Smooth rotation speed transition
   rotSpeed+=(targetSpeed-rotSpeed)*0.05;
   rotY+=rotSpeed;
@@ -526,9 +526,9 @@ const nodeTexts=node.selectAll('text');
   // Update node positions with depth-based scale & opacity
   node.attr('transform',d=>'translate('+d.sx+','+d.sy+') scale('+d.sc+')')
       .attr('opacity',d=>{const base=Math.max(0.2,Math.min(1,(d.sc-0.55)*2.8));return dimSet?(dimSet.has(d.id)?base:0.06):base;});
-  // Depth-based stroke & text opacity using pre-cached selections (front solid, back fading)
-  nodeCircles.attr('stroke-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.1,Math.min(0.6,(d.sc-0.55)*2));});
-  nodeTexts.attr('fill-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.15,Math.min(1,(d.sc-0.55)*3));});
+  // Depth-based stroke & text opacity (front solid, back fading)
+  node.select('circle').attr('stroke-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.1,Math.min(0.6,(d.sc-0.55)*2));});
+  node.selectAll('text').attr('fill-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.15,Math.min(1,(d.sc-0.55)*3));});
 
   // Update links with depth-based opacity for 3D volume
   link.attr('x1',d=>d.source.sx).attr('y1',d=>d.source.sy)
@@ -536,7 +536,7 @@ const nodeTexts=node.selectAll('text');
       .attr('opacity',d=>{const as=(d.source.sc+d.target.sc)/2;return Math.max(0.1,(as-0.55)*0.8);});
 
   // Depth-sort nodes (back to front) every 10 frames
-  if(Math.random()<0.1){
+  if(frameCount%10===0){
     const sorted=[...nodes].sort((a,b)=>a.depth-b.depth);
     sorted.forEach(d=>{const el=document.querySelector('[data-id="'+d.id+'"]');if(el)el.parentNode.appendChild(el);});
   }
@@ -556,7 +556,7 @@ const nodeTexts=node.selectAll('text');
   pCircles.attr('cx',d=>d.x).attr('cy',d=>d.y).attr('r',d=>d.curR).attr('opacity',d=>d.curO);
 
   // Constellation lines between nearby particles (draw every 3 frames)
-  if(Math.random()<0.33){
+  if(frameCount%10===0){
     let lHTML='';
     for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){
       const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,dist=Math.sqrt(dx*dx+dy*dy);
@@ -567,6 +567,7 @@ const nodeTexts=node.selectAll('text');
   }
 
   requestAnimationFrame(animate3D);
+}catch(e){console.error('[animate3D]',e);requestAnimationFrame(animate3D);}
 })();
 
 function hlNode(d){
