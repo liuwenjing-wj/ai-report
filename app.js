@@ -458,8 +458,8 @@ let hv=true;svg.on('mousedown.hint',()=>{if(hv){document.getElementById('scroll-
 
 const cc={};edges.forEach(e=>{cc[e.source]=(cc[e.source]||0)+1;cc[e.target]=(cc[e.target]||0)+1;});
 
-// 3D spherical node positioning
-const R=Math.min(W,H)*0.3;
+// 3D spherical node positioning — enlarge sphere as node count grows
+const R=Math.min(W,H)*0.3*(1+Math.max(0,nodes.length-40)*0.006);
 const cL=Object.keys(CAT_COLORS),cC={};
 cL.forEach((cat,i)=>{const th=(i/cL.length)*Math.PI*2,ph=Math.PI*0.3+(i%3)*Math.PI*0.2;cC[cat]={th,ph};});
 nodes.forEach(n=>{
@@ -473,13 +473,13 @@ nodes.forEach(n=>{
 });
 
 const sim=d3.forceSimulation(nodes)
-  .force('link',d3.forceLink(edges).id(d=>d.id).distance(60).strength(0.3))
-  .force('charge',d3.forceManyBody().strength(-100))
-  .force('collision',d3.forceCollide().radius(d=>d.r+6))
+  .force('link',d3.forceLink(edges).id(d=>d.id).distance(70).strength(0.25))
+  .force('charge',d3.forceManyBody().strength(-150))
+  .force('collision',d3.forceCollide().radius(d=>d.r+10))
   .force('radial',d3.forceRadial(R,0,0).strength(0.12));
 
 const lG=g.append('g');
-const link=lG.selectAll('line').data(edges).join('line').attr('stroke','#64748b').attr('stroke-width',1);
+const link=lG.selectAll('line').data(edges).join('line').attr('stroke','#64748b').attr('stroke-width',0.6).attr('stroke-opacity',0.5);
 
 const nG=g.append('g');
 const node=nG.selectAll('g').data(nodes).join('g').attr('cursor','pointer').classed('node-new',d=>newIdSet.has(d.id)).attr('data-id',d=>d.id);
@@ -525,15 +525,17 @@ try{
 
   // Update node positions with depth-based scale & opacity
   node.attr('transform',d=>'translate('+d.sx+','+d.sy+') scale('+d.sc+')')
-      .attr('opacity',d=>{const base=Math.max(0.2,Math.min(1,(d.sc-0.55)*2.8));return dimSet?(dimSet.has(d.id)?base:0.06):base;});
-  // Depth-based stroke & text opacity (front solid, back fading)
-  node.select('circle').attr('stroke-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.1,Math.min(0.6,(d.sc-0.55)*2));});
-  node.selectAll('text').attr('fill-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.15,Math.min(1,(d.sc-0.55)*3));});
+      .attr('opacity',d=>{const base=Math.max(0.15,Math.min(1,(d.sc-0.5)*3.2));return dimSet?(dimSet.has(d.id)?base:0.06):base;});
+  // Depth-based fill, stroke & text opacity (front solid, back fading)
+  node.select('circle')
+    .attr('fill-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.2,Math.min(1,(d.sc-0.5)*2.5));})
+    .attr('stroke-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.03;return Math.max(0.05,Math.min(0.7,(d.sc-0.5)*2.2));});
+  node.selectAll('text').attr('fill-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.03;return d.sc>0.82?Math.max(0.3,Math.min(1,(d.sc-0.5)*3)):0;});
 
   // Update links with depth-based opacity for 3D volume
   link.attr('x1',d=>d.source.sx).attr('y1',d=>d.source.sy)
       .attr('x2',d=>d.target.sx).attr('y2',d=>d.target.sy)
-      .attr('opacity',d=>{const as=(d.source.sc+d.target.sc)/2;return Math.max(0.1,(as-0.55)*0.8);});
+      .attr('opacity',d=>{const as=(d.source.sc+d.target.sc)/2;return Math.max(0.03,(as-0.5)*1.2);});
 
   // Depth-sort nodes (back to front) every 10 frames
   if(frameCount%10===0){
