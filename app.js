@@ -506,6 +506,10 @@ let dimSet=null;
 nG.on('mouseover',()=>{targetSpeed=0;})
     .on('mouseout',()=>{targetSpeed=0.001;});
 
+// Pre-cache node sub-selections for depth effects (avoids per-frame DOM queries)
+const nodeCircles=node.select('circle');
+const nodeTexts=node.selectAll('text');
+
 (function animate3D(){
   // Smooth rotation speed transition
   rotSpeed+=(targetSpeed-rotSpeed)*0.05;
@@ -522,9 +526,9 @@ nG.on('mouseover',()=>{targetSpeed=0;})
   // Update node positions with depth-based scale & opacity
   node.attr('transform',d=>'translate('+d.sx+','+d.sy+') scale('+d.sc+')')
       .attr('opacity',d=>{const base=Math.max(0.2,Math.min(1,(d.sc-0.55)*2.8));return dimSet?(dimSet.has(d.id)?base:0.06):base;});
-  // Depth-based stroke & text opacity (front solid, back fading)
-  node.select('circle').attr('stroke-opacity',d=>{if(sA&&!dimSet.has(d.id))return 0.05;if(lA&&!dimSet.has(d.id))return 0.05;return Math.max(0.1,Math.min(0.6,(d.sc-0.55)*2));});
-  node.selectAll('text').attr('fill-opacity',d=>{if(sA&&!dimSet.has(d.id))return 0.05;if(lA&&!dimSet.has(d.id))return 0.05;return Math.max(0.15,Math.min(1,(d.sc-0.55)*3));});
+  // Depth-based stroke & text opacity using pre-cached selections (front solid, back fading)
+  nodeCircles.attr('stroke-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.1,Math.min(0.6,(d.sc-0.55)*2));});
+  nodeTexts.attr('fill-opacity',d=>{if((sA||lA)&&dimSet&&!dimSet.has(d.id))return 0.05;return Math.max(0.15,Math.min(1,(d.sc-0.55)*3));});
 
   // Update links with depth-based opacity for 3D volume
   link.attr('x1',d=>d.source.sx).attr('y1',d=>d.source.sy)
