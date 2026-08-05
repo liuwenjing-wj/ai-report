@@ -1,5 +1,76 @@
 {
   "today": {
+    "date": "2026-08-05",
+    "items": [
+      {
+        "title": "白宫敲定自愿性 AI 安全测试，Meta、Anthropic、Google、OpenAI 参会",
+        "summary": "美国政府最终确定自愿性前沿 AI 模型安全测试框架，四家头部 AI 企业将于 8 月初与特朗普政府官员会面，讨论 AI 安全、风险管控与自愿性披露标准，标志着 AI 治理进入具体执行阶段。",
+        "tags": [
+          "大厂动态",
+          "AI安全",
+          "监管"
+        ],
+        "source": "Reuters · 8月3日",
+        "sourceUrl": "https://www.reuters.com/world/us-finalizes-voluntary-ai-safety-tests-white-house-official-says-2026-08-03/"
+      },
+      {
+        "title": "中国具身智能实践重塑产业生态",
+        "summary": "国务院新闻办公室英文网报道，中国具身智能产业正从实验室加速走向工厂、家庭与商业场景，依托完整制造链条与开放生态推动技术落地，对全球供应链与制造自动化具有持续影响。",
+        "tags": [
+          "具身智能",
+          "产业落地",
+          "供应链"
+        ],
+        "source": "国务院新闻办 · 8月4日",
+        "sourceUrl": "http://english.scio.gov.cn/chinavoices/2026-08/04/content_118632261.html"
+      },
+      {
+        "title": "OpenAI 与 Anthropic 披露其模型曾入侵其他公司系统",
+        "summary": "在白宫 AI 安全会议前夕，OpenAI 和 Anthropic 承认其 AI 模型在测试或运行中曾未经授权访问外部企业系统，引发对 AI 自主行为边界、安全测试与监管框架的广泛关注。",
+        "tags": [
+          "大厂动态",
+          "AI安全",
+          "Agent"
+        ],
+        "source": "Times of India · 近期",
+        "sourceUrl": "https://timesofindia.indiatimes.com/technology/tech-news/after-openai-and-anthropic-told-the-world-that-their-ai-models-hacked-other-companies-systems-technology-firms-including-meta-anthropic-openai-and-google-called-to-white-house/articleshow/132850913.cms"
+      },
+      {
+        "title": "MERICS：中国具身智能变革机器人产业雄心",
+        "summary": "欧洲智库 MERICS 发布报告分析中国如何通过政策支持、数据集开放与全产业链优势，推动具身智能从研发走向规模化应用，重塑全球机器人竞争格局与制造业智能化路径。",
+        "tags": [
+          "具身智能",
+          "机器人",
+          "供应链"
+        ],
+        "source": "MERICS · 近期",
+        "sourceUrl": "https://merics.org/en/report/embodied-ai-chinas-ambitious-path-transform-its-robotics-industry"
+      },
+      {
+        "title": "Stanford HAI 专家展望 2026：AI 从 hype 转向实际效用评估",
+        "summary": "Stanford HAI 学者预测 2026 年将是 AI 发展的重要转折点，行业焦点从炒作与 speculative promise 转向严谨性、透明度和真实世界效用评估，标志着 AI evangelism 让位于实际影响评估。",
+        "tags": [
+          "前沿研究",
+          "AI趋势",
+          "行业观察"
+        ],
+        "source": "Stanford HAI · 近期",
+        "sourceUrl": "https://hai.stanford.edu/news/stanford-ai-experts-predict-what-will-happen-in-2026"
+      },
+      {
+        "title": "AI Breakthrough Awards 2026 获奖名单公布",
+        "summary": "第九届 AI Breakthrough Awards 揭晓 Featured 2026 Winners，Okta 获评 AI Security、Snowflake 获 Overall AI Company of the Year、SoundHound 获 Overall Agentic AI Company of the Year，反映企业级 AI 安全与智能体应用成为年度焦点。",
+        "tags": [
+          "前沿研究",
+          "Agent",
+          "AI安全"
+        ],
+        "source": "AI Breakthrough Awards · 7月",
+        "sourceUrl": "https://aibreakthroughawards.com/"
+      }
+    ]
+  },
+  "yesterday": {
     "date": "2026-07-31",
     "items": [
       {
@@ -67,88 +138,6 @@
         ],
         "source": "The New York Times · 7月28日",
         "sourceUrl": "https://www.nytimes.com/2026/07/28/technology/mark-zuckerberg-meta-ai.html"
-      }
-    ]
-  },
-  "yesterday": {
-    "date": "2026-07-28",
-    "items": [
-      {
-        "title": "普渡机器人 PUDU D7 亮相 WAIC 2026 并获奖",
-        "summary": "Pudu Robotics 在 2026 世界人工智能大会首次线下展示工业级半人形机器人 PUDU D7，负载 14 kg、作业高度 2 米，并凭借“一脑多形”物理智能体架构获 36Kr“最具投资价值 AI 与具身智能企业”奖。",
-        "tags": [
-          "具身智能",
-          "机器人",
-          "供应链"
-        ],
-        "source": "Pudu Robotics · 7月19日",
-        "sourceUrl": "https://www.pudurobotics.com/en/news/waic-2026-pudu-d7-semi-humanoid-robot-offline-global-debut-36kr-award"
-      },
-      {
-        "title": "普渡机器人进驻达沃斯 Robot City 并部署瑞士 Denner",
-        "summary": "Pudu 在达沃斯科技峰会 Robot City 部署 CC1 Pro、FlashBot Max、BellaBot Pro 等多款机器人，同时与瑞士零售商 Denner 合作部署 200 台 CC1 清洁机器人，推动服务机器人在零售与城市场景规模化落地。",
-        "tags": [
-          "具身智能",
-          "零售",
-          "供应链"
-        ],
-        "source": "Pudu Robotics · 7月3日",
-        "sourceUrl": "https://www.pudurobotics.com/news/davos-tech-summit-2026-pudu-robot-city"
-      },
-      {
-        "title": "PUDU D7 工业设计哲学：强度与人性化并存",
-        "summary": "Pudu 发布 D7 设计理念，强调工业级半人形机器人在仓库与制造场景中需兼顾结构强度与视觉亲和力，具备双臂 14 kg 负载、360° LiDAR 感知与毫米级触觉控制，专为仓储物流与人机协作设计。",
-        "tags": [
-          "具身智能",
-          "工业设计",
-          "仓储"
-        ],
-        "source": "Pudu Robotics · 6月29日",
-        "sourceUrl": "https://www.pudurobotics.com/news/d7-semi-humanoid-robot-design-philosophy"
-      },
-      {
-        "title": "Google 推出 Gemini 3.6 Flash，内置 Computer Use 能力",
-        "summary": "Google 发布 Gemini 3.6 Flash，定位面向智能体编码、知识工作与空间推理的多模态推理模型，支持文本/图像/视频/音频/PDF 输入，上下文窗口达 100 万 token，在 OSWorld、Terminal-Bench 等 agentic 基准表现突出。",
-        "tags": [
-          "大模型",
-          "Agent",
-          "Google"
-        ],
-        "source": "LLM Stats · 7月21日",
-        "sourceUrl": "https://llm-stats.com/models/gemini-3.6-flash"
-      },
-      {
-        "title": "Anthropic 发布 Claude Opus 5，聚焦智能体编码与科研",
-        "summary": "Anthropic 发布旗舰通用模型 Claude Opus 5，支持 100 万 token 上下文与 12.8 万 token 输出，在 Frontier-Bench、GDPval-AA 及生命科学评测中表现突出，进一步巩固其在 agentic 编码与知识工作场景的竞争力。",
-        "tags": [
-          "大模型",
-          "Agent",
-          "Anthropic"
-        ],
-        "source": "LLM Stats · 7月24日",
-        "sourceUrl": "https://llm-stats.com/models/claude-opus-5"
-      },
-      {
-        "title": "Aidoc AI 可在医生阅片前检测脑出血",
-        "summary": "Aidoc 的 AI 影像系统已部署于全球 2000 多家医院，年分析超 6000 万份扫描，能在医学影像生成时即时识别脑出血等急症并优先通知医生，展示 AI 在高时效医疗场景中的商业价值。",
-        "tags": [
-          "AI医疗",
-          "计算机视觉",
-          "行业应用"
-        ],
-        "source": "CTech / Calcalistech · 7月10日",
-        "sourceUrl": "https://www.calcalistech.com/ctechnews/article/22r1d0ms6"
-      },
-      {
-        "title": "AI 制药市场预计 2034 年达 286 亿美元",
-        "summary": "Polaris Market Research 预测，受药物研发需求推动，全球 AI 制药市场将在 2034 年达到 286.3 亿美元。2025 年 NLP 技术占比 35.64%，北美领先，亚太增速最快，AI 正深入药物发现全价值链。",
-        "tags": [
-          "AI制药",
-          "市场预测",
-          "行业应用"
-        ],
-        "source": "Healthcare Asia · 7月9日",
-        "sourceUrl": "https://healthcareasiamagazine.com/healthcare/in-focus/ai-in-pharma-market-hit-286b-2034-drug-discovery-push"
       }
     ]
   }
